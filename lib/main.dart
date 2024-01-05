@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:madcamp_2nd_week/pages/sign_up_page.dart';
+import 'package:madcamp_2nd_week/pages/start_page.dart';
 
 import 'model/api.dart';
 
@@ -13,7 +15,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: MyHomePage(),
+      home: StartPage(),
+      routes: {
+        '/signup': (context) => SignUpPage(),
+      },
     );
   }
 }
@@ -89,7 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed:(){
                 var data = {
                   "username" : "aaa",
-                  "email" : "adfffa",
+                  "email" : "hnfa",
                   "password" : "fsdafd"
                 };
                 postData(data);
