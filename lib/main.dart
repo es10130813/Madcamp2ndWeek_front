@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -46,7 +48,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> postData(Map udata) async {
     try {
-      final response = await http.post(Uri.parse('$serverUrl/register'), body:udata );
+      print(udata);
+      final response = await http.post(
+          Uri.parse('$serverUrl/register'),
+          body: jsonEncode(udata),
+          headers: {"Content-Type": "application/json"},
+      );
       statusCode = response.statusCode;
       if (response.statusCode == 201) {
         setState(() {
@@ -81,7 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ElevatedButton(
               onPressed:(){
                 var data = {
-                  "name" : "aaa",
+                  "username" : "aaa",
                   "email" : "adfffa",
                   "password" : "fsdafd"
                 };
