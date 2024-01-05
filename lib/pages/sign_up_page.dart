@@ -95,10 +95,6 @@ class SignUpPageState extends State<SignUpPage>{
             ),
             ElevatedButton(
               onPressed: (){
-                String? name = nameController.text;
-                String? id = idController.text;
-                String? password = passwordController.text;
-
                 var data = {
                   "username" : nameController.text,
                   "email" : idController.text,
