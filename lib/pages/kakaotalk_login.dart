@@ -1,67 +1,93 @@
 import 'package:flutter/services.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 
+void onLoginSuccess(String accessToken) {
+  print('로그인 성공: $accessToken');
+  // 여기에 로그인 성공시 실행할 로직을 추가
+}
+
+void onLoginFail(dynamic error) {
+  print('로그인 실패: $error');
+  // 여기에 로그인 실패시 실행할 로직을 추가
+}
+
+void onTokenValid(String userId, int expiresIn) {
+  print('토큰 유효성 체크 성공: 사용자ID $userId, 만료시간 $expiresIn');
+  // 여기에 토큰이 유효할 때 실행할 로직을 추가
+}
+
+void onTokenExpired(dynamic error) {
+  print('토큰 만료: $error');
+  // 여기에 토큰이 만료되었을 때 실행할 로직을 추가
+}
+
+void onUserInfoSuccess(User user) {
+  print('사용자 정보 요청 성공: '
+      '회원번호: ${user.id}, '
+      '닉네임: ${user.kakaoAccount?.profile?.nickname}, '
+      '이메일: ${user.kakaoAccount?.email}');
+  // 여기에 사용자 정보를 성공적으로 받아왔을 때 실행할 로직을 추가
+}
+
+void onUserInfoFail(dynamic error) {
+  print('사용자 정보 요청 실패: $error');
+  // 여기에 사용자 정보 요청 실패시 실행할 로직을 추가
+}
 
 Future<void> kakaotalk_login() async {
   // 카카오톡 로그인 로직 구현
   if (await isKakaoTalkInstalled()) {
     try {
       await UserApi.instance.loginWithKakaoTalk();
-      print('카카오톡으로 로그인 성공');
+      onLoginSuccess('카카오톡으로 로그인 성공');
     } catch (error) {
-      print('카카오톡으로 로그인 실패 $error');
+      onLoginFail(error);
 
-      // 사용자가 카카오톡 설치 후 디바이스 권한 요청 화면에서 로그인을 취소한 경우,
-      // 의도적인 로그인 취소로 보고 카카오계정으로 로그인 시도 없이 로그인 취소로 처리 (예: 뒤로 가기)
       if (error is PlatformException && error.code == 'CANCELED') {
+        // 로그인 취소로 처리
         return;
       }
     }
 
     if (await AuthApi.instance.hasToken()) {
       try {
-        AccessTokenInfo tokenInfo =
-        await UserApi.instance.accessTokenInfo();
-        print('토큰 유효성 체크 성공 ${tokenInfo.id} ${tokenInfo.expiresIn}');
+        AccessTokenInfo tokenInfo = await UserApi.instance.accessTokenInfo();
+        onTokenValid(tokenInfo.id.toString(), tokenInfo.expiresIn);
       } catch (error) {
         if (error is KakaoException && error.isInvalidTokenError()) {
-          print('토큰 만료 $error');
+          onTokenExpired(error);
         } else {
-          print('토큰 정보 조회 실패 $error');
+          onLoginFail(error);
         }
 
         try {
-          // 카카오계정으로 로그인
           OAuthToken token = await UserApi.instance.loginWithKakaoAccount();
-          print('로그인 성공 ${token.accessToken}');
+          onLoginSuccess(token.accessToken);
         } catch (error) {
-          print('로그인 실패 $error');
+          onLoginFail(error);
         }
       }
     } else {
-      print('발급된 토큰 없음');
+      onLoginFail('발급된 토큰 없음');
       try {
         OAuthToken token = await UserApi.instance.loginWithKakaoAccount();
-        print('로그인 성공 ${token.accessToken}');
+        onLoginSuccess(token.accessToken);
       } catch (error) {
-        print('로그인 실패 $error');
+        onLoginFail(error);
       }
     }
   } else {
     try {
-      await UserApi.instance.loginWithKakaoAccount();
-      print('카카오계정으로 로그인 성공');
+      OAuthToken token = await UserApi.instance.loginWithKakaoAccount();
+      onLoginSuccess(token.accessToken);
       try {
         User user = await UserApi.instance.me();
-        print('사용자 정보 요청 성공'
-            '\n회원번호: ${user.id}'
-            '\n닉네임: ${user.kakaoAccount?.profile?.nickname}'
-            '\n이메일: ${user.kakaoAccount?.email}');
+        onUserInfoSuccess(user);
       } catch (error) {
-        print('사용자 정보 요청 실패 $error');
+        onUserInfoFail(error);
       }
     } catch (error) {
-      print('카카오계정으로 로그인 실패 $error');
+      onLoginFail(error);
     }
   }
 }
