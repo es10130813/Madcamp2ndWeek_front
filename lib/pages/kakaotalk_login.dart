@@ -30,6 +30,15 @@ Future<void> kakaotalk_login() async {
     try {
       await UserApi.instance.loginWithKakaoAccount();
       print('카카오계정으로 로그인 성공');
+      try {
+        User user = await UserApi.instance.me();
+        print('사용자 정보 요청 성공'
+            '\n회원번호: ${user.id}'
+            '\n닉네임: ${user.kakaoAccount?.profile?.nickname}'
+            '\n이메일: ${user.kakaoAccount?.email}');
+      } catch (error) {
+        print('사용자 정보 요청 실패 $error');
+      }
     } catch (error) {
       print('카카오계정으로 로그인 실패 $error');
     }

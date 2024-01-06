@@ -97,8 +97,9 @@ class SignUpPageState extends State<SignUpPage>{
               onPressed: (){
                 var data = {
                   "username" : nameController.text,
-                  "email" : idController.text,
-                  "password" : passwordController.text
+                  "id" : idController.text,
+                  "password" : passwordController.text,
+                  "type" : "local"
                 };
                 signUp(data);
               },
