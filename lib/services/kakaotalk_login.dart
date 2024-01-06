@@ -32,7 +32,7 @@ void onUserInfoSuccess(User user) {
   var data = {
    "username": user.kakaoAccount?.profile?.nickname,
     "uid": user.id,
-    "password": Null,
+    "password": "0000",
     "type": "kakao"
   };
   signUp(data, serverUrl);

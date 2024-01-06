@@ -11,8 +11,8 @@ class LogInPage extends StatefulWidget {
 }
 
 class LogInPageState  extends State<LogInPage>{
-  //final String serverUrl = 'http://143.248.196.86:3000';
-  final String serverUrl = 'http://143.248.219.174:3000';
+    final String serverUrl = 'http://143.248.196.86:3000';
+//  final String serverUrl = 'http://143.248.219.174:3000';
 
   String loginResult = '';
   int statusCode = 0;
@@ -83,7 +83,7 @@ class LogInPageState  extends State<LogInPage>{
             ElevatedButton(
               onPressed: (){
                 var data = {
-                  "id" : idController.text,
+                  "uid" : idController.text,
                   "password" : passwordController.text
                 };
                 login(data);
