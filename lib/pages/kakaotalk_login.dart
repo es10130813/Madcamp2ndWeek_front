@@ -4,8 +4,6 @@ import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 
 Future<void> kakaotalk_login() async {
   // 카카오톡 로그인 로직 구현
-  var key = await KakaoSdk.origin;
-  print(key);
   if (await isKakaoTalkInstalled()) {
     try {
       await UserApi.instance.loginWithKakaoTalk();
@@ -18,12 +16,35 @@ Future<void> kakaotalk_login() async {
       if (error is PlatformException && error.code == 'CANCELED') {
         return;
       }
-      // 카카오톡에 연결된 카카오계정이 없는 경우, 카카오계정으로 로그인
+    }
+
+    if (await AuthApi.instance.hasToken()) {
       try {
-        await UserApi.instance.loginWithKakaoAccount();
-        print('카카오계정으로 로그인 성공');
+        AccessTokenInfo tokenInfo =
+        await UserApi.instance.accessTokenInfo();
+        print('토큰 유효성 체크 성공 ${tokenInfo.id} ${tokenInfo.expiresIn}');
       } catch (error) {
-        print('카카오계정으로 로그인 실패 $error');
+        if (error is KakaoException && error.isInvalidTokenError()) {
+          print('토큰 만료 $error');
+        } else {
+          print('토큰 정보 조회 실패 $error');
+        }
+
+        try {
+          // 카카오계정으로 로그인
+          OAuthToken token = await UserApi.instance.loginWithKakaoAccount();
+          print('로그인 성공 ${token.accessToken}');
+        } catch (error) {
+          print('로그인 실패 $error');
+        }
+      }
+    } else {
+      print('발급된 토큰 없음');
+      try {
+        OAuthToken token = await UserApi.instance.loginWithKakaoAccount();
+        print('로그인 성공 ${token.accessToken}');
+      } catch (error) {
+        print('로그인 실패 $error');
       }
     }
   } else {
