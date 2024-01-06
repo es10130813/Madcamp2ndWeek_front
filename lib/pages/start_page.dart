@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'kakaotalk_login.dart';
+import '../services/kakaotalk_login.dart';
 
 class StartPage extends StatelessWidget{
   const StartPage({super.key});
