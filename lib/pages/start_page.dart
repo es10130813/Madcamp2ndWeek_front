@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'kakaotalk_login.dart';
 
 class StartPage extends StatelessWidget{
   const StartPage({super.key});
@@ -57,7 +58,7 @@ class StartPage extends StatelessWidget{
                 child: InkWell(
                   borderRadius: BorderRadius.circular(15.0),
                   onTap: () {
-                    print("버튼 터치");
+                    kakaotalk_login();
                   },
                   child: Container(
                     width: double.infinity,
