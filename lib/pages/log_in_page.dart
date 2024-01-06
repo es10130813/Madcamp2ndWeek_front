@@ -31,7 +31,7 @@ class LogInPageState  extends State<LogInPage>{
 
       statusCode = response.statusCode;
       print(statusCode);
-      if (response.statusCode == 201) {
+      if (response.statusCode == 200) {
         setState(() {
           loginResult = "로그인 성공";
         });
@@ -83,7 +83,7 @@ class LogInPageState  extends State<LogInPage>{
             ElevatedButton(
               onPressed: (){
                 var data = {
-                  "id" : idController.text,
+                  "uid" : idController.text,
                   "password" : passwordController.text
                 };
                 login(data);

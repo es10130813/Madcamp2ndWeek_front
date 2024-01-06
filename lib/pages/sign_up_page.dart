@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -111,9 +112,12 @@ class SignUpPageState extends State<SignUpPage>{
                 final response = await http.get(Uri.parse(serverUrl));
                 if (response.statusCode == 200) {
                   print('Response: ${response.body}');
+                  var key = await KakaoSdk.origin;
+                  print(key);
                 } else {
                   print('Error: ${response.statusCode}');
                   print('Message: ${jsonDecode(response.body)['message']}');
+
                 }
                 },
               child: Text('get 요청'),
