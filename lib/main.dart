@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:madcamp_2nd_week/pages/log_in_page.dart';
+import 'package:madcamp_2nd_week/pages/main_page.dart';
 import 'package:madcamp_2nd_week/pages/sign_up_page.dart';
 import 'package:madcamp_2nd_week/pages/start_page.dart';
 
@@ -13,6 +15,8 @@ class MyApp extends StatelessWidget {
       home: StartPage(),
       routes: {
         '/signup': (context) => SignUpPage(),
+        '/login' : (context) => LogInPage(),
+        '/main' : (context) => MainPage(),
       },
     );
   }

@@ -1,9 +1,11 @@
 class User {
   final String? username;
-  final String? email;
+  final String? uid;
   final String? password;
-  //랭킹 점수
-  //
+  final String? type;
 
-  User({this.username, this.email, this.password});
+  //랭킹 점수
+  //로그인 유형
+
+  User({this.username, this.uid, this.password, this.type});
 }

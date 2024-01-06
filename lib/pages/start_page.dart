@@ -26,6 +26,38 @@ class StartPage extends StatelessWidget{
                 child: InkWell(
                   borderRadius: BorderRadius.circular(15.0),
                   onTap: () {
+                    Navigator.pushNamed(context, '/main');
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    height: 60.0,
+                    alignment: Alignment.center,
+                    child: Text(
+                      "개발자용 메인페이지 이동",
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(
+                left: 10.0, // 좌측 마진
+                top: 4.0, // 상단 마진
+                right: 10.0, // 우측 마진
+                bottom: 4.0, // 하단 마진
+              ),
+              child: Material(
+                borderRadius: BorderRadius.circular(15.0),
+                color: Colors.white,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(15.0),
+                  onTap: () {
+                    Navigator.pushNamed(context, '/login');
                     print("버튼 터치");
                   },
                   child: Container(
