@@ -33,6 +33,58 @@ class _GamePlayState extends State<GamePlay> {
             Container(
               height: 100,
               color: Colors.deepPurple[500],
+              child: Row(
+                children: [
+                  Expanded(
+                      child: Container(
+                        color: Colors.cyan[200],
+                      )),
+                  Expanded(
+                    flex: 4,
+                    child: LayoutBuilder(
+                      builder:
+                          (BuildContext context, BoxConstraints constraints) {
+                        double width = constraints.maxWidth;
+                        double shift_num = 20.0;
+                        double deck_length =
+                            80 + shift_num * (cards.length - 1);
+                        double stack_padding = (width - deck_length) / 2;
+                        if (stack_padding < 0) {
+                          stack_padding = 0;
+                          shift_num = (width - 80) / (cards.length - 1);
+                        }
+                        return Container(
+                          color: Colors.cyan[300],
+                          child: Padding(
+                            padding:
+                            EdgeInsets.only(
+                              top: 0.0,    // 위쪽 패딩 설정
+                              bottom: 25.0, // 아래쪽 패딩 설정
+                              left: stack_padding,    // 왼쪽 패딩 설정
+                              right: stack_padding,  // 오른쪽 패딩 설정
+                            ),
+                            child: Stack(
+                              alignment: Alignment.bottomCenter,
+                              children: List.generate(cards.length, (index) {
+                                final double shift = index * shift_num;
+                                return Positioned(
+                                    left: shift,
+                                    child: CardWidget(
+                                        cardName: "card_back",
+                                        ));
+                              }),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  Expanded(
+                      child: Container(
+                        color: Colors.cyan[200],
+                      )),
+                ],
+              ),
             ),
             Expanded(
                 flex: 2,
@@ -42,7 +94,7 @@ class _GamePlayState extends State<GamePlay> {
                         child : Column(
                           children: [
                             Expanded(
-                                child: Container(color: Colors.cyan[100],)),
+                                child: Container(color: Colors.teal[100],)),
                             Expanded(
                               flex: 8,
                               child: LayoutBuilder(
@@ -58,7 +110,7 @@ class _GamePlayState extends State<GamePlay> {
                                     shift_num = (height - 80) / (cards.length - 1);
                                   }
                                   return Container(
-                                    color: Colors.cyan[300],
+                                    color: Colors.teal[300],
                                     child: Padding(
                                       padding:
                                       EdgeInsets.only(
@@ -84,7 +136,7 @@ class _GamePlayState extends State<GamePlay> {
                               ),
                             ),
                             Expanded(
-                                child: Container(color: Colors.cyan[100],)),
+                                child: Container(color: Colors.teal[100],)),
                             Expanded(
                                 flex: 3,
                                 child: Container(color: Colors.orange[200],)),
@@ -95,64 +147,56 @@ class _GamePlayState extends State<GamePlay> {
                         )),
                     Expanded(
                         child: Container(
-                      child: Column(
-                        children: [
-                          Expanded(
-                              flex: 2,
-                              child: Container(
-                                color: Colors.pink[200],
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 10),
-                                  child: Stack(
-                                    alignment: Alignment.center,
-                                    children: List.generate(52, (index) {
-                                      final double shift = index * 0.8;
-                                      return Positioned(
-                                          bottom: shift,
-                                          child: CardWidget(
-                                              cardName: "card_back",
-                                              onDragged: () {
-                                                setState(() {
-                                                  cards.removeAt(index);
-                                                });
-                                              }));
-                                    }),
-                                  ),
-                                ),
-                              )),
-                          Expanded(
-                              flex: 2,
-                              child: Container(
-                                color: Colors.pink[200],
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 10),
-                                  child: Stack(
-                                    alignment: Alignment.center,
-                                    children: List.generate(1, (index) {
-                                      final double shift = index * 0.8;
-                                      return Positioned(
-                                          bottom: shift,
-                                          child: CardWidget(
-                                              cardName: "QH",
-                                              onDragged: () {
-                                                setState(() {
-                                                  cards.removeAt(index);
-                                                });
-                                              }));
-                                    }),
-                                  ),
-                                ),
-                              )),
-                        ],
-                      ),
-                    )),
+                          child: Column(
+                            children: [
+                              Expanded(
+                                  flex: 2,
+                                  child: Container(
+                                    color: Colors.pink[200],
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(vertical: 10),
+                                      child: Stack(
+                                        alignment: Alignment.center,
+                                        children: List.generate(52, (index) {
+                                          final double shift = index * 0.8;
+                                          return Positioned(
+                                              bottom: shift,
+                                              child: CardWidget(
+                                                  cardName: "card_back",
+                                                  ));
+                                        }),
+                                      ),
+                                    ),
+                                  )),
+                              Expanded(
+                                  flex: 2,
+                                  child: Container(
+                                    color: Colors.pink[200],
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(vertical: 10),
+                                      child: Stack(
+                                        alignment: Alignment.center,
+                                        children: List.generate(1, (index) {
+                                          final double shift = index * 0.8;
+                                          return Positioned(
+                                              bottom: shift,
+                                              child: CardWidget(
+                                                  cardName: "QH",
+                                                  ));
+                                        }),
+                                      ),
+                                    ),
+                                  )),
+                            ],
+                          ),
+                        )),
                     Expanded(
                         child : Column(
                           children: [
                             Expanded(
-                                child: Container(color: Colors.cyan[100],)),
+                                child: Container(color: Colors.teal[100],)),
                             Expanded(
-                                flex: 8,
+                              flex: 8,
                               child: LayoutBuilder(
                                 builder:
                                     (BuildContext context, BoxConstraints constraints) {
@@ -166,7 +210,7 @@ class _GamePlayState extends State<GamePlay> {
                                     shift_num = (height - 80) / (cards.length - 1);
                                   }
                                   return Container(
-                                    color: Colors.cyan[300],
+                                    color: Colors.teal[300],
                                     child: Padding(
                                       padding:
                                       EdgeInsets.only(
@@ -176,22 +220,22 @@ class _GamePlayState extends State<GamePlay> {
                                         right: 0.0,  // 오른쪽 패딩 설정
                                       ),
                                       child: Stack(
-                                      children: List.generate(cards.length, (index) {
-                                        final double shift = index * shift_num;
-                                        return Positioned(
-                                            top: shift,
-                                            child: CardTurend(
-                                              cardName: "card_back_turned",
-                                            ));
-                                      }),
-                                    ),
+                                        children: List.generate(cards.length, (index) {
+                                          final double shift = index * shift_num;
+                                          return Positioned(
+                                              top: shift,
+                                              child: CardTurend(
+                                                cardName: "card_back_turned",
+                                              ));
+                                        }),
+                                      ),
                                     ),
                                   );
                                 },
                               ),
                             ),
                             Expanded(
-                                child: Container(color: Colors.cyan[100],)),
+                                child: Container(color: Colors.teal[100],)),
                             Expanded(
                                 flex: 3,
                                 child: Container(color: Colors.orange[200],)),
@@ -213,58 +257,58 @@ class _GamePlayState extends State<GamePlay> {
                 )),
             Expanded(
                 child: Container(
-              child: Row(
-                children: [
-                  Expanded(
-                      child: Container(
-                    color: Colors.cyan[200],
-                  )),
-                  Expanded(
-                    flex: 4,
-                    child: LayoutBuilder(
-                      builder:
-                          (BuildContext context, BoxConstraints constraints) {
-                        double width = constraints.maxWidth;
-                        double shift_num = 20.0;
-                        double deck_length =
-                            80 + shift_num * (cards.length - 1);
-                        double stack_padding = (width - deck_length) / 2;
-                        if (stack_padding < 0) {
-                          stack_padding = 0;
-                          shift_num = (width - 80) / (cards.length - 1);
-                        }
-                        return Container(
-                          color: Colors.cyan[300],
-                          child: Padding(
-                            padding:
+                  child: Row(
+                    children: [
+                      Expanded(
+                          child: Container(
+                            color: Colors.cyan[200],
+                          )),
+                      Expanded(
+                        flex: 4,
+                        child: LayoutBuilder(
+                          builder:
+                              (BuildContext context, BoxConstraints constraints) {
+                            double width = constraints.maxWidth;
+                            double shift_num = 20.0;
+                            double deck_length =
+                                80 + shift_num * (cards.length - 1);
+                            double stack_padding = (width - deck_length) / 2;
+                            if (stack_padding < 0) {
+                              stack_padding = 0;
+                              shift_num = (width - 80) / (cards.length - 1);
+                            }
+                            return Container(
+                              color: Colors.cyan[300],
+                              child: Padding(
+                                padding:
                                 EdgeInsets.symmetric(horizontal: stack_padding),
-                            child: Stack(
-                              alignment: Alignment.center,
-                              children: List.generate(cards.length, (index) {
-                                final double shift = index * shift_num;
-                                return Positioned(
-                                    left: shift,
-                                    child: CardWidget(
-                                        cardName: cards[index],
-                                        onDragged: () {
-                                          setState(() {
-                                            cards.removeAt(index);
-                                          });
-                                        }));
-                              }),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
+                                child: Stack(
+                                  alignment: Alignment.center,
+                                  children: List.generate(cards.length, (index) {
+                                    final double shift = index * shift_num;
+                                    return Positioned(
+                                        left: shift,
+                                        child: DraggableCard(
+                                            cardName: cards[index],
+                                            onDragged: () {
+                                              setState(() {
+                                                cards.removeAt(index);
+                                              });
+                                            }));
+                                  }),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      Expanded(
+                          child: Container(
+                            color: Colors.cyan[200],
+                          )),
+                    ],
                   ),
-                  Expanded(
-                      child: Container(
-                    color: Colors.cyan[200],
-                  )),
-                ],
-              ),
-            )),
+                )),
           ],
         ),
       ),
@@ -272,11 +316,11 @@ class _GamePlayState extends State<GamePlay> {
   }
 }
 
-class CardWidget extends StatelessWidget {
+class DraggableCard extends StatelessWidget {
   final String cardName;
   final VoidCallback onDragged;
 
-  const CardWidget({Key? key, required this.cardName, required this.onDragged})
+  const DraggableCard({Key? key, required this.cardName, required this.onDragged})
       : super(key: key);
 
   @override
@@ -325,6 +369,25 @@ class CardTurend extends StatelessWidget {
     return Container(
       width: 112,
       height: 80,
+      child: Image.asset(
+        asset,
+      ),
+    );
+  }
+}
+class CardWidget extends StatelessWidget {
+  final String cardName;
+
+  const CardWidget({Key? key, required this.cardName})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final String asset = 'assets/images/$cardName.png';
+
+    return Container(
+      width: 80,
+      height: 112,
       child: Image.asset(
         asset,
       ),
