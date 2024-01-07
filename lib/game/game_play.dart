@@ -1,28 +1,77 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'cards.dart';
+
 class GamePlay extends StatefulWidget {
+
   @override
   _GamePlayState createState() => _GamePlayState();
 }
 
-class _GamePlayState extends State<GamePlay> {
+class _GamePlayState extends State<GamePlay> with SingleTickerProviderStateMixin{
   double cardLeft = 0.0;
-  List<String> cards = [
-    '7D',
-    '7H',
-    '7S',
-    '8C',
-    '9C',
-    'JKB',
-    'JKR',
-    '2S',
-    '3C',
-    '3D',
-    'QS'
-  ];
+
+  List<String> myHand =  ["4H", "9S", "8D", "6H", "TC", "JS", "KS"];
+  List<String> firstHand = ["8H", "7S", "JD", "8C", "AD", "3D", "KD"];
+  List<String> secondHand =  ["2D", "3C", "9D", "QH", "3S", "3H", "JC"];
+  List<String> thirdHand =  ["2S", "5H", "5C", "KH", "5D", "9C", "TD"];
+  List<String> deck = ["2C", "8S", "5S", "6D", "QS", "TH", "6S", "6C", "9H", "KC", "7C", "7H", "JH", "4D", "QC", "TS", "4C", "AS", "2H", "QD", "AC", "AH", "7D"];
+  List<String> pile = ["4S"];
+
+  late OverlayEntry _overlayEntry;
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 180),
+      vsync: this,
+    );
+  }
+
+  void _showOverlay(BuildContext context) {
+    Size screenSize = MediaQuery.of(context).size;
+
+    // 화면의 중앙을 계산
+    double centerX = screenSize.width / 2 - 40; // 카드 너비의 절반을 뺀 값
+    double centerY = screenSize.height / 2 - 112; // 카드 높이의 절반을 뺀 값
+
+    _overlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        left: centerX, // 화면 중앙의 X 좌표
+        top: centerY, // 화면 중앙의 Y 좌표
+        child: AnimatedBuilder(
+          animation: _controller,
+          builder: (context, child) {
+            return Transform.translate(
+              offset: Offset(0, _controller.value * 320), // 애니메이션 종료 위치 조정
+              child: CardWidget(cardName: "AS"),
+            );
+          },
+        ),
+      ),
+    );
+
+    Overlay.of(context)!.insert(_overlayEntry);
+
+    _controller.forward();
+
+    _controller.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        _overlayEntry.remove(); // 애니메이션이 완료되면 오버레이 제거
+        _controller.reset(); // 애니메이션 컨트롤러 재설정
+      }
+    });
+  }
 
 
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,11 +96,11 @@ class _GamePlayState extends State<GamePlay> {
                         double width = constraints.maxWidth;
                         double shift_num = 20.0;
                         double deck_length =
-                            80 + shift_num * (cards.length - 1);
+                            80 + shift_num * (firstHand.length - 1);
                         double stack_padding = (width - deck_length) / 2;
                         if (stack_padding < 0) {
                           stack_padding = 0;
-                          shift_num = (width - 80) / (cards.length - 1);
+                          shift_num = (width - 80) / (firstHand.length - 1);
                         }
                         return Container(
                           color: Colors.cyan[300],
@@ -65,7 +114,7 @@ class _GamePlayState extends State<GamePlay> {
                             ),
                             child: Stack(
                               alignment: Alignment.bottomCenter,
-                              children: List.generate(cards.length, (index) {
+                              children: List.generate(firstHand.length, (index) {
                                 final double shift = index * shift_num;
                                 return Positioned(
                                     left: shift,
@@ -87,7 +136,7 @@ class _GamePlayState extends State<GamePlay> {
               ),
             ),
             Container(
-              height: 65,
+              height: 60,
               color: Colors.orange[300],
               child: Column(
                 children: [
@@ -95,7 +144,7 @@ class _GamePlayState extends State<GamePlay> {
                     width: 800,
                     height: 40,
                     child: Image.asset("assets/images/profile_pic.png"),),
-                  Container(child: Text("user3"),),
+                  Container(child: Text("user1"),),
                 ],
               ),
             ),
@@ -116,11 +165,11 @@ class _GamePlayState extends State<GamePlay> {
                                   double height = constraints.maxHeight;
                                   double shift_num = 20.0;
                                   double deck_length =
-                                      80 + shift_num * (cards.length - 1);
+                                      80 + shift_num * (secondHand.length - 1);
                                   double stack_padding = (height - deck_length) / 2;
                                   if (stack_padding < 0) {
                                     stack_padding = 0;
-                                    shift_num = (height - 80) / (cards.length - 1);
+                                    shift_num = (height - 80) / (secondHand.length - 1);
                                   }
                                   return Container(
                                     color: Colors.teal[300],
@@ -134,7 +183,7 @@ class _GamePlayState extends State<GamePlay> {
                                       ),
                                       child: Stack(
                                         alignment: Alignment.centerRight,
-                                        children: List.generate(cards.length, (index) {
+                                        children: List.generate(secondHand.length, (index) {
                                           final double shift = index * shift_num;
                                           return Positioned(
                                               top: shift,
@@ -159,7 +208,7 @@ class _GamePlayState extends State<GamePlay> {
                                         width: 800,
                                         height: 40,
                                         child: Image.asset("assets/images/profile_pic.png"),),
-                                      Container(child: Text("user3"),),
+                                      Container(child: Text("user2"),),
                                     ],
                                   ),
                                 )),
@@ -180,7 +229,7 @@ class _GamePlayState extends State<GamePlay> {
                                       padding: EdgeInsets.symmetric(vertical: 0),
                                       child: Stack( //Deck
                                         alignment: Alignment.center,
-                                        children: List.generate(52, (index) {
+                                        children: List.generate(deck.length, (index) {
                                           final double shift = index * 0.8;
                                           return Positioned(
                                               bottom: shift,
@@ -197,14 +246,14 @@ class _GamePlayState extends State<GamePlay> {
                                     color: Colors.pink[100],
                                     child: Padding(
                                       padding: EdgeInsets.symmetric(vertical: 10),
-                                      child: Stack(
+                                      child: Stack( //Pile
                                         alignment: Alignment.center,
-                                        children: List.generate(1, (index) {
+                                        children: List.generate(pile.length, (index) {
                                           final double shift = index * 0.8;
                                           return Positioned(
                                               bottom: shift,
                                               child: CardWidget(
-                                                  cardName: "QH",
+                                                  cardName: pile.last,
                                                   ));
                                         }),
                                       ),
@@ -226,11 +275,11 @@ class _GamePlayState extends State<GamePlay> {
                                   double height = constraints.maxHeight;
                                   double shift_num = 20.0;
                                   double deck_length =
-                                      80 + shift_num * (cards.length - 1);
+                                      80 + shift_num * (thirdHand.length - 1);
                                   double stack_padding = (height - deck_length) / 2;
                                   if (stack_padding < 0) {
                                     stack_padding = 0;
-                                    shift_num = (height - 80) / (cards.length - 1);
+                                    shift_num = (height - 80) / (thirdHand.length - 1);
                                   }
                                   return Container(
                                     color: Colors.teal[300],
@@ -243,7 +292,7 @@ class _GamePlayState extends State<GamePlay> {
                                         right: 0.0,  // 오른쪽 패딩 설정
                                       ),
                                       child: Stack(
-                                        children: List.generate(cards.length, (index) {
+                                        children: List.generate(thirdHand.length, (index) {
                                           final double shift = index * shift_num;
                                           return Positioned(
                                               top: shift,
@@ -279,9 +328,17 @@ class _GamePlayState extends State<GamePlay> {
                                     visible: true,
                                     child: Padding(
                                       padding: EdgeInsets.all(10),
-                                      child: ElevatedButton(onPressed: () {
-
-                                      }, child: Text("턴 종료"),
+                                      child: ElevatedButton(onPressed: (){
+                                        print(myHand.length+firstHand.length+secondHand.length+thirdHand.length+deck.length+pile.length);
+                                        String deckTop = deck.last;
+                                        setState(() {
+                                          deck.removeLast();
+                                        });
+                                        _showOverlay(context);
+                                        myHand.add(deckTop);
+                                        setState(() {});
+                                      },
+                                        child: Text("턴 종료"),
                                       ),
                                     ),
                                   ),
@@ -299,18 +356,18 @@ class _GamePlayState extends State<GamePlay> {
                             color: Colors.cyan[200],
                           )),
                       Expanded(
-                        flex: 4,
+                        flex: 14,
                         child: LayoutBuilder(
                           builder:
                               (BuildContext context, BoxConstraints constraints) {
                             double width = constraints.maxWidth;
                             double shift_num = 20.0;
                             double deck_length =
-                                80 + shift_num * (cards.length - 1);
+                                80 + shift_num * (myHand.length - 1);
                             double stack_padding = (width - deck_length) / 2;
                             if (stack_padding < 0) {
                               stack_padding = 0;
-                              shift_num = (width - 80) / (cards.length - 1);
+                              shift_num = (width - 80) / (myHand.length - 1);
                             }
                             return Container(
                               color: Colors.cyan[300],
@@ -319,15 +376,15 @@ class _GamePlayState extends State<GamePlay> {
                                 EdgeInsets.symmetric(horizontal: stack_padding),
                                 child: Stack( //myHand
                                   alignment: Alignment.center,
-                                  children: List.generate(cards.length, (index) {
+                                  children: List.generate(myHand.length, (index) {
                                     final double shift = index * shift_num;
                                     return Positioned(
                                         left: shift,
                                         child: DraggableCard(
-                                            cardName: cards[index],
+                                            cardName: myHand[index],
                                             onDragged: () {
                                               setState(() {
-                                                cards.removeAt(index);
+                                                myHand.removeAt(index);
                                               });
                                             }));
                                   }),
@@ -349,83 +406,5 @@ class _GamePlayState extends State<GamePlay> {
       ),
     );
   }
-}
 
-class DraggableCard extends StatelessWidget {
-  final String cardName;
-  final VoidCallback onDragged;
-
-  const DraggableCard({Key? key, required this.cardName, required this.onDragged})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final String asset = 'assets/images/$cardName.png';
-
-    return Draggable(
-      data: cardName,
-      childWhenDragging: Container(),
-      feedback: Card(
-        child: Container(
-          width: 80,
-          height: 112,
-          child: Image.asset(
-            asset,
-          ),
-        ),
-      ),
-      onDragEnd: (details) {
-        if (details.wasAccepted) {
-          onDragged();
-        }
-      },
-      child: Container(
-        width: 80,
-        height: 112,
-        child: Image.asset(
-          asset,
-        ),
-      ),
-    );
-  }
-}
-
-class CardTurend extends StatelessWidget {
-  final String cardName;
-
-  const CardTurend({Key? key, required this.cardName})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final String asset = 'assets/images/$cardName.png';
-
-    return Container(
-      width: 112,
-      height: 80,
-      child: Image.asset(
-        asset,
-      ),
-    );
-  }
-}
-
-class CardWidget extends StatelessWidget {
-  final String cardName;
-
-  const CardWidget({Key? key, required this.cardName})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final String asset = 'assets/images/$cardName.png';
-
-    return Container(
-      width: 80,
-      height: 112,
-      child: Image.asset(
-        asset,
-      ),
-    );
-  }
 }
