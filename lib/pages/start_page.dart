@@ -27,7 +27,7 @@ class StartPage extends StatelessWidget{
                 child: InkWell(
                   borderRadius: BorderRadius.circular(15.0),
                   onTap: () {
-                    Navigator.pushNamed(context, '/main');
+                    Navigator.pushNamed(context, '/gameplay');
                   },
                   child: Container(
                     width: double.infinity,
