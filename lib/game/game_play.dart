@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class GamePlay extends StatefulWidget {
   @override
@@ -23,6 +22,7 @@ class _GamePlayState extends State<GamePlay> {
     'QS'
   ];
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,7 +31,7 @@ class _GamePlayState extends State<GamePlay> {
         child: Column(
           children: [
             Container(
-              height: 100,
+              height: 75,
               color: Colors.deepPurple[500],
               child: Row(
                 children: [
@@ -59,7 +59,7 @@ class _GamePlayState extends State<GamePlay> {
                             padding:
                             EdgeInsets.only(
                               top: 0.0,    // 위쪽 패딩 설정
-                              bottom: 25.0, // 아래쪽 패딩 설정
+                              bottom: 10.0, // 아래쪽 패딩 설정
                               left: stack_padding,    // 왼쪽 패딩 설정
                               right: stack_padding,  // 오른쪽 패딩 설정
                             ),
@@ -83,6 +83,19 @@ class _GamePlayState extends State<GamePlay> {
                       child: Container(
                         color: Colors.cyan[200],
                       )),
+                ],
+              ),
+            ),
+            Container(
+              height: 65,
+              color: Colors.orange[300],
+              child: Column(
+                children: [
+                  Container(
+                    width: 800,
+                    height: 40,
+                    child: Image.asset("assets/images/profile_pic.png"),),
+                  Container(child: Text("user3"),),
                 ],
               ),
             ),
@@ -135,11 +148,21 @@ class _GamePlayState extends State<GamePlay> {
                                 },
                               ),
                             ),
-                            Expanded(
-                                child: Container(color: Colors.teal[100],)),
+                            Container(height: 10,color: Colors.teal[100],),
                             Expanded(
                                 flex: 3,
-                                child: Container(color: Colors.orange[200],)),
+                                child: Container(
+                                  color: Colors.orange[300],
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        width: 800,
+                                        height: 40,
+                                        child: Image.asset("assets/images/profile_pic.png"),),
+                                      Container(child: Text("user3"),),
+                                    ],
+                                  ),
+                                )),
                             Expanded(
                                 flex: 3,
                                 child: Container(color: Colors.orange[100],)),
@@ -154,8 +177,8 @@ class _GamePlayState extends State<GamePlay> {
                                   child: Container(
                                     color: Colors.pink[200],
                                     child: Padding(
-                                      padding: EdgeInsets.symmetric(vertical: 10),
-                                      child: Stack(
+                                      padding: EdgeInsets.symmetric(vertical: 0),
+                                      child: Stack( //Deck
                                         alignment: Alignment.center,
                                         children: List.generate(52, (index) {
                                           final double shift = index * 0.8;
@@ -171,7 +194,7 @@ class _GamePlayState extends State<GamePlay> {
                               Expanded(
                                   flex: 2,
                                   child: Container(
-                                    color: Colors.pink[200],
+                                    color: Colors.pink[100],
                                     child: Padding(
                                       padding: EdgeInsets.symmetric(vertical: 10),
                                       child: Stack(
@@ -234,11 +257,21 @@ class _GamePlayState extends State<GamePlay> {
                                 },
                               ),
                             ),
-                            Expanded(
-                                child: Container(color: Colors.teal[100],)),
+                            Container(height: 10,color: Colors.teal[100],),
                             Expanded(
                                 flex: 3,
-                                child: Container(color: Colors.orange[200],)),
+                                child: Container(
+                                  color: Colors.orange[300],
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        width: 800,
+                                        height: 40,
+                                        child: Image.asset("assets/images/profile_pic.png"),),
+                                      Container(child: Text("user3"),),
+                                    ],
+                                  ),
+                                )),
                             Expanded(
                                 flex: 3,
                                 child: Container(
@@ -246,7 +279,9 @@ class _GamePlayState extends State<GamePlay> {
                                     visible: true,
                                     child: Padding(
                                       padding: EdgeInsets.all(10),
-                                      child: ElevatedButton(onPressed: () {  }, child: Text("턴 종료"),
+                                      child: ElevatedButton(onPressed: () {
+
+                                      }, child: Text("턴 종료"),
                                       ),
                                     ),
                                   ),
@@ -282,7 +317,7 @@ class _GamePlayState extends State<GamePlay> {
                               child: Padding(
                                 padding:
                                 EdgeInsets.symmetric(horizontal: stack_padding),
-                                child: Stack(
+                                child: Stack( //myHand
                                   alignment: Alignment.center,
                                   children: List.generate(cards.length, (index) {
                                     final double shift = index * shift_num;
@@ -355,7 +390,6 @@ class DraggableCard extends StatelessWidget {
   }
 }
 
-
 class CardTurend extends StatelessWidget {
   final String cardName;
 
@@ -375,6 +409,7 @@ class CardTurend extends StatelessWidget {
     );
   }
 }
+
 class CardWidget extends StatelessWidget {
   final String cardName;
 
