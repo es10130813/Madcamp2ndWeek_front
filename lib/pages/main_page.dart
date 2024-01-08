@@ -4,20 +4,21 @@ import 'home_page.dart';
 import 'my_page.dart';
 
 class MainPage extends StatefulWidget {
-  const MainPage({super.key});
+  final String userId;
+  const MainPage({super.key, required this.userId});
 
   @override
-  MainPageStaet createState() => MainPageStaet();
+  MainPageState createState() => MainPageState();
 }
-
-class MainPageStaet  extends State<MainPage>{
+class MainPageState extends State<MainPage> {
   int _currentIndex = 1;
 
-  final List<Widget> _navIndex = [
+  List<Widget> get _navIndex => [
     RankingPage(),
     HomePage(),
-    MyPage(),
+    MyPage(userId: widget.userId), // MyPage 생성자에 userId 전달
   ];
+
 
   void onTabTapped(int index) {
     setState(() {
@@ -29,7 +30,7 @@ class MainPageStaet  extends State<MainPage>{
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xff121212),
-      body:  _navIndex.elementAt(_currentIndex),
+      body: _navIndex.elementAt(_currentIndex),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Color(0xff121212),
         onTap: onTabTapped,

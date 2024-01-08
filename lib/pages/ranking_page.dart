@@ -43,7 +43,7 @@ class RankingPageState extends State<RankingPage> {
           userDataList =
               updatedUserDataList; // userDataList를 업데이트하고 화면을 다시 그리도록 setState 호출
         });
-        //print(userDataList);
+        print(userDataList);
       } else {
         print('Failed to load data. Status code: ${response.statusCode}');
       }
@@ -67,38 +67,36 @@ class RankingPageState extends State<RankingPage> {
       ),
       body: Scaffold(
         backgroundColor: Color(0xff121212),
-        body: SafeArea(
-          child: Container(
-            color: Color(0xff121212),
-            child: ListView.builder(
-              itemCount: userDataList.length,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.all(5.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white10,
-                      borderRadius: BorderRadius.circular(10.0)
-                    ),
-                    child: ListTile(
-                      leading: Image.asset("assets/images/profile_pic.png"),
-                      title: Text(
-                        userDataList[index]["username"].toString(),
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                      subtitle:
-                      Text(
-                        '비번: ${userDataList[index]["password"]}',
-                        style: TextStyle(
-                        color: Colors.white60,
+        body: Container(
+          color: Color(0xff121212),
+          child: ListView.builder(
+            itemCount: userDataList.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white10,
+                    borderRadius: BorderRadius.circular(10.0)
+                  ),
+                  child: ListTile(
+                    leading: Image.asset("assets/images/profile_pic.png"),
+                    title: Text(
+                      userDataList[index]["username"].toString(),
+                      style: TextStyle(
+                        color: Colors.white,
                       ),
                     ),
-                  ),),
-                );
-              },
-            ),
+                    subtitle:
+                    Text(
+                      '비번: ${userDataList[index]["password"]}',
+                      style: TextStyle(
+                      color: Colors.white60,
+                    ),
+                  ),
+                ),),
+              );
+            },
           ),
         ),
       ),

@@ -35,7 +35,7 @@ class LogInPageState  extends State<LogInPage>{
       if (response.statusCode == 200) {
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => MainPage()), // NewPage는 이동하려는 새 페이지
+          MaterialPageRoute(builder: (context) => MainPage(userId: idController.text)), // NewPage는 이동하려는 새 페이지
               (Route<dynamic> route) => false, // 이 조건이 false를 반환하면 모든 페이지를 제거
         );
       } else {
