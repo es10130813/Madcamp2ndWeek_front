@@ -12,6 +12,8 @@ class GamePlay extends StatefulWidget {
 class _GamePlayState extends State<GamePlay> with SingleTickerProviderStateMixin{
   double cardLeft = 0.0;
 
+  List<String> num = ["turn"];
+
   List<String> myHand =  ["9S", "JKR", "8D", "6H", "TC", "JS", "KS"];
   List<String> firstHand = ["8H", "7S", "JD", "8C", "AD", "3D", "KD"];
   List<String> secondHand =  ["2D", "3C", "9D", "QH", "3S", "3H", "JC"];
@@ -245,7 +247,7 @@ class _GamePlayState extends State<GamePlay> with SingleTickerProviderStateMixin
                                     color: Colors.pink[100],
                                     child: Padding(
                                       padding: EdgeInsets.symmetric(vertical: 10),
-                                      child: _buildDragTarget(pile),
+                                      child: BuildDragTarget(pile: pile, num: num),
                                     ),
                                   )),
                             ],
@@ -318,6 +320,7 @@ class _GamePlayState extends State<GamePlay> with SingleTickerProviderStateMixin
                                       padding: EdgeInsets.all(10),
                                       child: ElevatedButton(onPressed: (){
                                         print(pile);
+                                        print(num);
                                         print(myHand.length+firstHand.length+secondHand.length+thirdHand.length+deck.length+pile.length);
                                         String deckTop = deck.last;
                                         setState(() {
@@ -396,31 +399,46 @@ class _GamePlayState extends State<GamePlay> with SingleTickerProviderStateMixin
     );
   }
 
-  Widget _buildDragTarget(List pile) {
+}
+
+class BuildDragTarget extends StatefulWidget {
+  final List pile;
+  List num;
+
+  BuildDragTarget({Key? key, required this.pile, required this.num}) : super(key: key);
+
+  @override
+  _BuildDragTargetState createState() => _BuildDragTargetState();
+}
+
+class _BuildDragTargetState extends State<BuildDragTarget> {
+  @override
+  Widget build(BuildContext context) {
     return DragTarget<String>(
-      // This method decides whether the dragged item will be accepted or not
       onWillAccept: (data) {
-        // Only accept if the dragged card's name is "KS"
-        return (pile.last[0]==data?[0]||pile.last[1]==data?[1]);
+        if (widget.num.length == 1) {
+          return (widget.pile.last[0] == data?[0] || widget.pile.last[1] == data?[1]);
+        } else {
+          return false;
+        }
       },
-      // Defines what happens when an accepted data is dropped on the target
       onAccept: (data) {
-        pile.add(data);
-        print(pile);
-        // Implement what should happen when the "AS" card is dropped
+        if (data?[0]=="K") widget.num.add("turn");
+        widget.pile.add(data);
+        widget.num.removeLast();
+        print(widget.pile);
+        print(widget.num);
         print('Card $data dropped!');
       },
-      // Builder to build the UI of the DragTarget
       builder: (BuildContext context, List<String?> candidateData, List<dynamic> rejectedData) {
-        // You can customize the appearance based on whether an item is being hovered over the target
         return  Stack( //Pile
           alignment: Alignment.center,
-          children: List.generate(pile.length, (index) {
+          children: List.generate(widget.pile.length, (index) {
             final double shift = index * 0.8;
             return Positioned(
                 bottom: shift,
                 child: CardWidget(
-                  cardName: pile.last,
+                  cardName: widget.pile.last,
                 ));
           }),
         );
