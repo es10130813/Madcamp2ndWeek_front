@@ -12,43 +12,22 @@ class StartPage extends StatelessWidget{
         child: Column(
             children: [
               Expanded(
-                child: Container(),
+                child: Container(), // 빈 컨테이너를 추가하여 아래의 위젯들이 화면의 아래에 정렬되도록 함
               ),
               Container(
-                margin: EdgeInsets.all(10.0),
-                child: Material(
-                  borderRadius: BorderRadius.circular(15.0),
-                  color: Colors.white,
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(15.0),
-                    onTap: () {
-                      Navigator.pushNamed(context, '/roomList');
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      height: 60.0,
-                      alignment: Alignment.center,
-                      child: Text(
-                        "방 목록",
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16
-                        ),
-                      ),
-                    ),
-                  ),
+                margin: EdgeInsets.only(
+                  left: 10.0, // 좌측 마진
+                  top: 4.0, // 상단 마진
+                  right: 10.0, // 우측 마진
+                  bottom: 4.0, // 하단 마진
                 ),
-              ),
-              Container(
-                margin: EdgeInsets.all(10.0),
                 child: Material(
                   borderRadius: BorderRadius.circular(15.0),
                   color: Colors.white,
                   child: InkWell(
                     borderRadius: BorderRadius.circular(15.0),
                     onTap: () {
-                      Navigator.pushNamed(context, '/gameplay');
+                      Navigator.pushNamed(context, '/main');
                     },
                     child: Container(
                       width: double.infinity,
@@ -67,7 +46,43 @@ class StartPage extends StatelessWidget{
                 ),
               ),
               Container(
-                margin: EdgeInsets.all(10.0),
+                margin: EdgeInsets.only(
+                  left: 10.0, // 좌측 마진
+                  top: 4.0, // 상단 마진
+                  right: 10.0, // 우측 마진
+                  bottom: 4.0, // 하단 마진
+                ),
+                child: Material(
+                  borderRadius: BorderRadius.circular(15.0),
+                  color: Colors.white,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(15.0),
+                    onTap: () {
+                      Navigator.pushNamed(context, '/gameplay');
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      height: 60.0,
+                      alignment: Alignment.center,
+                      child: Text(
+                        "개발자용 게임페이지 이동",
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.only(
+                  left: 10.0, // 좌측 마진
+                  top: 4.0, // 상단 마진
+                  right: 10.0, // 우측 마진
+                  bottom: 4.0, // 하단 마진
+                ),
                 child: Material(
                   borderRadius: BorderRadius.circular(15.0),
                   color: Colors.white,
@@ -75,6 +90,7 @@ class StartPage extends StatelessWidget{
                     borderRadius: BorderRadius.circular(15.0),
                     onTap: () {
                       Navigator.pushNamed(context, '/login');
+                      print("버튼 터치");
                     },
                     child: Container(
                       width: double.infinity,
@@ -93,7 +109,12 @@ class StartPage extends StatelessWidget{
                 ),
               ),
               Container(
-                margin: EdgeInsets.all(10.0),
+                margin: EdgeInsets.only(
+                  left: 10.0, // 좌측 마진
+                  top: 4.0, // 상단 마진
+                  right: 10.0, // 우측 마진
+                  bottom: 4.0, // 하단 마진
+                ),
                 child: Material(
                   borderRadius: BorderRadius.circular(15.0),
                   color: Color(0xffF7E600),
@@ -135,6 +156,7 @@ class StartPage extends StatelessWidget{
                 ),
               ),
               SizedBox(
+                width: 10.0,
                 height: 8.0,
               )
             ]

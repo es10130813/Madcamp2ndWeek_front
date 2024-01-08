@@ -12,8 +12,15 @@ class DraggableCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final String asset = 'assets/images/$cardName.png';
 
-    return Draggable(
+    return Draggable<String>(
       data: cardName,
+      child: Container(
+        width: 80,
+        height: 112,
+        child: Image.asset(
+          asset,
+        ),
+      ),
       childWhenDragging: Container(),
       feedback: Card(
         child: Container(
@@ -29,13 +36,6 @@ class DraggableCard extends StatelessWidget {
           onDragged();
         }
       },
-      child: Container(
-        width: 80,
-        height: 112,
-        child: Image.asset(
-          asset,
-        ),
-      ),
     );
   }
 }
@@ -79,3 +79,5 @@ class CardWidget extends StatelessWidget {
     );
   }
 }
+
+
