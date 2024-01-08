@@ -12,11 +12,11 @@ class GamePlay extends StatefulWidget {
 class _GamePlayState extends State<GamePlay> with SingleTickerProviderStateMixin{
   double cardLeft = 0.0;
 
-  List<String> myHand =  ["4H", "9S", "8D", "6H", "TC", "JS", "KS"];
+  List<String> myHand =  ["9S", "JKR", "8D", "6H", "TC", "JS", "KS"];
   List<String> firstHand = ["8H", "7S", "JD", "8C", "AD", "3D", "KD"];
   List<String> secondHand =  ["2D", "3C", "9D", "QH", "3S", "3H", "JC"];
   List<String> thirdHand =  ["2S", "5H", "5C", "KH", "5D", "9C", "TD"];
-  List<String> deck = ["2C", "8S", "5S", "6D", "QS", "TH", "6S", "6C", "9H", "KC", "7C", "7H", "JH", "4D", "QC", "TS", "4C", "AS", "2H", "QD", "AC", "AH", "7D"];
+  List<String> deck = ["4H", "2C", "8S", "5S", "6D", "QS", "TH", "6S", "6C", "9H", "KC", "7C", "7H", "JKB","JH", "4D", "QC", "TS", "4C", "AS", "2H", "QD", "AC", "AH", "7D"];
   List<String> pile = ["4S"];
 
   late OverlayEntry _overlayEntry;
@@ -155,8 +155,7 @@ class _GamePlayState extends State<GamePlay> with SingleTickerProviderStateMixin
                     Expanded(
                         child : Column(
                           children: [
-                            Expanded(
-                                child: Container(color: Colors.teal[100],)),
+                            Container(height: 10,color: Colors.teal[100],),
                             Expanded(
                               flex: 8,
                               child: LayoutBuilder(
@@ -246,17 +245,7 @@ class _GamePlayState extends State<GamePlay> with SingleTickerProviderStateMixin
                                     color: Colors.pink[100],
                                     child: Padding(
                                       padding: EdgeInsets.symmetric(vertical: 10),
-                                      child: Stack( //Pile
-                                        alignment: Alignment.center,
-                                        children: List.generate(pile.length, (index) {
-                                          final double shift = index * 0.8;
-                                          return Positioned(
-                                              bottom: shift,
-                                              child: CardWidget(
-                                                  cardName: pile.last,
-                                                  ));
-                                        }),
-                                      ),
+                                      child: _buildDragTarget(pile),
                                     ),
                                   )),
                             ],
@@ -265,8 +254,7 @@ class _GamePlayState extends State<GamePlay> with SingleTickerProviderStateMixin
                     Expanded(
                         child : Column(
                           children: [
-                            Expanded(
-                                child: Container(color: Colors.teal[100],)),
+                            Container(height: 10,color: Colors.teal[100],),
                             Expanded(
                               flex: 8,
                               child: LayoutBuilder(
@@ -329,6 +317,7 @@ class _GamePlayState extends State<GamePlay> with SingleTickerProviderStateMixin
                                     child: Padding(
                                       padding: EdgeInsets.all(10),
                                       child: ElevatedButton(onPressed: (){
+                                        print(pile);
                                         print(myHand.length+firstHand.length+secondHand.length+thirdHand.length+deck.length+pile.length);
                                         String deckTop = deck.last;
                                         setState(() {
@@ -407,4 +396,35 @@ class _GamePlayState extends State<GamePlay> with SingleTickerProviderStateMixin
     );
   }
 
+  Widget _buildDragTarget(List pile) {
+    return DragTarget<String>(
+      // This method decides whether the dragged item will be accepted or not
+      onWillAccept: (data) {
+        // Only accept if the dragged card's name is "KS"
+        return (pile.last[0]==data?[0]||pile.last[1]==data?[1]);
+      },
+      // Defines what happens when an accepted data is dropped on the target
+      onAccept: (data) {
+        pile.add(data);
+        print(pile);
+        // Implement what should happen when the "AS" card is dropped
+        print('Card $data dropped!');
+      },
+      // Builder to build the UI of the DragTarget
+      builder: (BuildContext context, List<String?> candidateData, List<dynamic> rejectedData) {
+        // You can customize the appearance based on whether an item is being hovered over the target
+        return  Stack( //Pile
+          alignment: Alignment.center,
+          children: List.generate(pile.length, (index) {
+            final double shift = index * 0.8;
+            return Positioned(
+                bottom: shift,
+                child: CardWidget(
+                  cardName: pile.last,
+                ));
+          }),
+        );
+      },
+    );
+  }
 }
