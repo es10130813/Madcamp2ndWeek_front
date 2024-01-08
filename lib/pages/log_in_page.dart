@@ -1,6 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../services/auth_service.dart';
+import 'package:http/http.dart' as http;
+import 'package:madcamp_2nd_week/pages/main_page.dart';
+
+import '../globals.dart';
 
 class LogInPage extends StatefulWidget {
   const LogInPage({super.key});
@@ -11,15 +16,44 @@ class LogInPage extends StatefulWidget {
 
 class LogInPageState  extends State<LogInPage>{
 
-    String loginResult = '';
-    int statusCode = 0;
+  String loginResult = '';
+  int statusCode = 0;
 
-    var idController = TextEditingController();
-    var passwordController = TextEditingController();
+  var idController = TextEditingController();
+  var passwordController = TextEditingController();
 
-    bool get isButtonEnabled => idController.text.isNotEmpty && passwordController.text.isNotEmpty;
+  bool get isButtonEnabled => idController.text.isNotEmpty && passwordController.text.isNotEmpty;
+  Future<void> login(Map udata) async {
+    try {
+      print(udata);
+      final response = await http.post(
+        Uri.parse('$serverUrl/login'),
+        body: jsonEncode(udata),
+        headers: {"Content-Type": "application/json"},
+      );
 
-  @override Widget build(BuildContext context) {
+      statusCode = response.statusCode;
+      print(statusCode);
+      if (response.statusCode == 200) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => MainPage(userId: idController.text)), // NewPage는 이동하려는 새 페이지
+              (Route<dynamic> route) => false, // 이 조건이 false를 반환하면 모든 페이지를 제거
+        );
+      } else {
+        setState(() {
+          loginResult = '바르지 않은 계정 정보입니다.';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        loginResult = 'Error: $e';
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xff121212),
       body: SafeArea (
@@ -88,7 +122,7 @@ class LogInPageState  extends State<LogInPage>{
               padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 25.0),
               child: TextField(
                 style: TextStyle(
-                  color: Colors.white
+                    color: Colors.white
                 ),
                 controller: passwordController,
                 obscureText: true,
@@ -115,11 +149,7 @@ class LogInPageState  extends State<LogInPage>{
                     "uid" : idController.text,
                     "password" : passwordController.text
                   };
-                  login(context, data, (String result) {
-                    setState(() {
-                      loginResult = result;
-                    });
-                  });
+                  login(data);
                 },
                 style: ElevatedButton.styleFrom(
                   primary: Colors.white,  // 버튼의 배경 색상

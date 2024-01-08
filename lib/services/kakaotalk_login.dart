@@ -1,115 +1,115 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:http/http.dart' as http;
 import '../globals.dart';
+import '../pages/main_page.dart';
 
-
-void onLoginSuccess(String accessToken) {
-  print('로그인 성공: $accessToken');
-  // 여기에 로그인 성공시 실행할 로직을 추가
-
-}
-
-void onLoginFail(dynamic error) {
-  print('로그인 실패: $error');
-  // 여기에 로그인 실패시 실행할 로직을 추가
-}
-
-void onTokenValid(String userId, int expiresIn) {
-  print('토큰 유효성 체크 성공: 사용자ID $userId, 만료시간 $expiresIn');
-  // 여기에 토큰이 유효할 때 실행할 로직을 추가
-}
-
-void onTokenExpired(dynamic error) {
-  print('토큰 만료: $error');
-  // 여기에 토큰이 만료되었을 때 실행할 로직을 추가
-}
-
-Future<void> onUserInfoSuccess(User user) async {
-  print('사용자 정보 요청 성공: '
-      '회원번호: ${user.id}, '
-      '닉네임: ${user.kakaoAccount?.profile?.nickname}, '
-  );
-  var data = {
-    "username": user.kakaoAccount?.profile?.nickname,
-    "uid": user.id,
-    "password": "0000",
-    "type": "kakao"
+// 사용자 정보를 서버에서 확인하고, 로그인 또는 회원가입을 진행하는 함수
+Future<void> checkAndLoginUser(BuildContext context, Map<String, dynamic> userData) async {
+  var loginData = {
+    'uid': userData['uid'],
+    'password': '0000', // 카카오 로그인의 경우 임의의 비밀번호 설정
   };
-  final response = await http.post(
-    Uri.parse('$serverUrl/register'),
-    body: jsonEncode(data),
-    headers: {"Content-Type": "application/json"},
-  );
 
-  if (response.statusCode == 201) {
-      print("성공");
-  }
-  else {
-      print("실패");
+  // 서버에 로그인 시도
+  var loginResult = await login(loginData);
+  print(loginResult);
+  print(userData);
+  if (loginResult == '로그인 성공') {
+    // 로그인 성공: 메인 화면으로 이동
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => MainPage(userId: userData['uid'])),
+    );
+  } else {
+    // 로그인 실패: 회원가입 시도
+    var signUpResult = await signUp(userData, serverUrl);
+    if (signUpResult == '회원가입 성공') {
+      // 회원가입 성공: 메인 화면으로 이동
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => MainPage(userId: userData['uid'])),
+      );
+    } else {
+      // 회원가입 실패: 오류 메시지 처리
+      print('회원가입 실패: $signUpResult');
+    }
   }
 }
 
-void onUserInfoFail(dynamic error) {
-  print('사용자 정보 요청 실패: $error');
-  // 여기에 사용자 정보 요청 실패시 실행할 로직을 추가
+// 서버에 로그인 요청을 보내는 함수
+Future<String> login(Map udata) async {
+  try {
+    final response = await http.post(
+      Uri.parse('$serverUrl/login'),
+      body: jsonEncode(udata),
+      headers: {"Content-Type": "application/json"},
+    );
+
+    if (response.statusCode == 200) {
+      return "로그인 성공";
+    } else {
+      return "바르지 않은 계정 정보입니다.";
+    }
+  } catch (e) {
+    return "Error: $e";
+  }
 }
 
-Future<void> kakaotalk_login() async {
-  // 카카오톡 로그인 로직 구현
+// 서버에 회원가입 요청을 보내는 함수
+Future<String> signUp(Map udata, String serverUrl) async {
+  try {
+    final response = await http.post(
+      Uri.parse('$serverUrl/register'),
+      body: jsonEncode(udata),
+      headers: {"Content-Type": "application/json"},
+    );
+
+  if (response.statusCode == 200) {
+      return "회원가입 성공";
+    } else {
+      return "중복된 id입니다.";
+    }
+  } catch (e) {
+    return 'Error: $e';
+  }
+}
+
+// 카카오톡 로그인을 처리하는 함수
+Future<void> kakaotalk_login(BuildContext context) async {
+  // 카카오톡 앱 설치 여부 확인
   if (await isKakaoTalkInstalled()) {
     try {
       await UserApi.instance.loginWithKakaoTalk();
-      onLoginSuccess('카카오톡으로 로그인 성공');
+      print('카카오톡으로 로그인 성공');
     } catch (error) {
-      onLoginFail(error);
-
+      print('카카오톡 로그인 실패: $error');
       if (error is PlatformException && error.code == 'CANCELED') {
-        // 로그인 취소로 처리
         return;
-      }
-    }
-
-    if (await AuthApi.instance.hasToken()) {
-      try {
-        AccessTokenInfo tokenInfo = await UserApi.instance.accessTokenInfo();
-        onTokenValid(tokenInfo.id.toString(), tokenInfo.expiresIn);
-      } catch (error) {
-        if (error is KakaoException && error.isInvalidTokenError()) {
-          onTokenExpired(error);
-        } else {
-          onLoginFail(error);
-        }
-
-        try {
-          OAuthToken token = await UserApi.instance.loginWithKakaoAccount();
-          onLoginSuccess(token.accessToken);
-        } catch (error) {
-          onLoginFail(error);
-        }
-      }
-    } else {
-      onLoginFail('발급된 토큰 없음');
-      try {
-        OAuthToken token = await UserApi.instance.loginWithKakaoAccount();
-        onLoginSuccess(token.accessToken);
-      } catch (error) {
-        onLoginFail(error);
       }
     }
   } else {
     try {
-      OAuthToken token = await UserApi.instance.loginWithKakaoAccount();
-      onLoginSuccess(token.accessToken);
-      try {
-        User user = await UserApi.instance.me();
-        onUserInfoSuccess(user);
-      } catch (error) {
-        onUserInfoFail(error);
-      }
+      await UserApi.instance.loginWithKakaoAccount();
+      print('카카오 계정으로 로그인 성공');
     } catch (error) {
-      onLoginFail(error);
+      print('카카오 계정 로그인 실패: $error');
+      return;
     }
+  }
+
+  try {
+    User user = await UserApi.instance.me();
+    var userData = {
+      "username": user.kakaoAccount?.profile?.nickname,
+      "uid": user.id.toString(),
+      "password": "0000",
+      "type": "kakao"
+    };
+    await checkAndLoginUser(context, userData);
+  } catch (error) {
+    print('사용자 정보 요청 실패: $error');
   }
 }
