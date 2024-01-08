@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
+import '../globals.dart';
+
 class FindRoomPage extends StatefulWidget {
   @override
   _FindRoomPageState createState() => _FindRoomPageState();
@@ -24,7 +26,7 @@ class _FindRoomPageState extends State<FindRoomPage> {
   }
 
   void initializeSocket() {
-    socket = IO.io('http://143.248.196.37:3000', <String, dynamic>{
+    socket = IO.io(serverUrl , <String, dynamic>{
       'transports': ['websocket'],
       'autoConnect': false,
     });

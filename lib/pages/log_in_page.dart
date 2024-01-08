@@ -5,6 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:madcamp_2nd_week/pages/main_page.dart';
 
+import '../globals.dart';
+
 class LogInPage extends StatefulWidget {
   const LogInPage({super.key});
 
@@ -13,7 +15,6 @@ class LogInPage extends StatefulWidget {
 }
 
 class LogInPageState  extends State<LogInPage>{
-    final String serverUrl = 'http://143.248.196.37:3000';
 
     String loginResult = '';
     int statusCode = 0;

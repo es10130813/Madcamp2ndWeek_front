@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:http/http.dart' as http;
+import '../globals.dart';
 
-const String serverUrl = 'http://143.248.196.37:3000';
 
 void onLoginSuccess(String accessToken) {
   print('로그인 성공: $accessToken');

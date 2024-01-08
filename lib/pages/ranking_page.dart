@@ -12,7 +12,7 @@ class RankingPage extends StatefulWidget {
 }
 
 class RankingPageState extends State<RankingPage> {
-  final String serverUrl = 'http://143.248.219.153:3000';
+  final String serverUrl = 'http://143.248.196.37:3000';
   List<Map<String, dynamic>> userDataList = [];
 
   @override
