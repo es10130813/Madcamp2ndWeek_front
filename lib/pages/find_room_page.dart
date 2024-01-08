@@ -63,7 +63,7 @@ class _FindRoomPageState extends State<FindRoomPage> {
   }
 
   void joinRoom(String roomCode) {
-    socket.emit('joinRoom', {'roomCode': roomCode});
+    socket.emit('joinRoom', {'roomCode': roomCode, 'userName': 'YourUserName'});
   }
 
   @override
