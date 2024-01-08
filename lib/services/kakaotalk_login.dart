@@ -1,12 +1,14 @@
+import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
-import 'auth_service.dart';
+import 'package:http/http.dart' as http;
 
-final String serverUrl = 'http://143.248.196.86:3000';
+const String serverUrl = 'http://143.248.196.37:3000';
 
 void onLoginSuccess(String accessToken) {
   print('로그인 성공: $accessToken');
   // 여기에 로그인 성공시 실행할 로직을 추가
+
 }
 
 void onLoginFail(dynamic error) {
@@ -24,19 +26,29 @@ void onTokenExpired(dynamic error) {
   // 여기에 토큰이 만료되었을 때 실행할 로직을 추가
 }
 
-void onUserInfoSuccess(User user) {
+Future<void> onUserInfoSuccess(User user) async {
   print('사용자 정보 요청 성공: '
       '회원번호: ${user.id}, '
       '닉네임: ${user.kakaoAccount?.profile?.nickname}, '
-      );
+  );
   var data = {
-   "username": user.kakaoAccount?.profile?.nickname,
+    "username": user.kakaoAccount?.profile?.nickname,
     "uid": user.id,
     "password": "0000",
     "type": "kakao"
   };
-  signUp(data, serverUrl);
-  // 여기에 사용자 정보를 성공적으로 받아왔을 때 실행할 로직을 추가
+  final response = await http.post(
+    Uri.parse('$serverUrl/register'),
+    body: jsonEncode(data),
+    headers: {"Content-Type": "application/json"},
+  );
+
+  if (response.statusCode == 201) {
+      print("성공");
+  }
+  else {
+      print("실패");
+  }
 }
 
 void onUserInfoFail(dynamic error) {
