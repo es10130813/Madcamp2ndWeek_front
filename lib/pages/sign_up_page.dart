@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 
@@ -53,82 +54,133 @@ class SignUpPageState extends State<SignUpPage>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Color(0xff121212),
       body: SafeArea (
         child: Column (
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 5.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      margin: const EdgeInsets.only(right: 10.0),
+                      child: Divider(
+                        color: Colors.white, // 선의 색상
+                        height: 1.5, // 선과 텍스트의 높이 정렬
+                      ),
+                    ),
+                  ),
+                  Text(
+                    "SIGN UP",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 30.0,
+                    ),
+                  ),
+                  Expanded(
+                    child: Container(
+                      margin: const EdgeInsets.only(left: 10.0),
+                      child: Divider(
+                        color: Colors.white, // 선의 색상
+                        height: 1.5, // 선과 텍스트의 높이 정렬
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 25.0),
               child: TextField(
+                style: TextStyle(color: Colors.white),
                 controller: nameController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'name',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
+                  labelStyle: TextStyle(color: Colors.white70), // 라벨 텍스트 색상 변경
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white70, width: 1.5), // 기본 상태의 밑줄 색상
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white, width: 2.0), // 포커스 됐을 때의 밑줄 색상
                   ),
                 ),
+                inputFormatters: [
+                  FilteringTextInputFormatter.deny(RegExp(r'\s')), // 공백 입력 방지
+                ],
               ),
             ),
+
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 25.0),
               child: TextField(
+                style: TextStyle(color: Colors.white),
                 controller: idController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'ID',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
+                  labelStyle: TextStyle(color: Colors.white70), // 라벨 텍스트 색상 변경
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white70, width: 1.5), // 기본 상태의 밑줄 색상
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white, width: 2.0), // 포커스 됐을 때의 밑줄 색상
                   ),
                 ),
+                inputFormatters: [
+                  FilteringTextInputFormatter.deny(RegExp(r'\s')), // 공백 입력 방지
+                ],
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 25.0),
               child: TextField(
+                style: TextStyle(color: Colors.white),
                 controller: passwordController,
                 obscureText: true,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'password',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
+                  labelStyle: TextStyle(color: Colors.white70), // 라벨 텍스트 색상 변경
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white70, width: 1.5), // 기본 상태의 밑줄 색상
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white, width: 2.0), // 포커스 됐을 때의 밑줄 색상
                   ),
                 ),
+                inputFormatters: [
+                  FilteringTextInputFormatter.deny(RegExp(r'\s')), // 공백 입력 방지
+                ],
               ),
             ),
-            ElevatedButton(
-              onPressed: (){
-                var data = {
-                  "username" : nameController.text,
-                  "uid" : idController.text,
-                  "password" : passwordController.text,
-                  "type" : "local"
-                };
-                signUp(data);
-              },
-              child: Text('sign Up'),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                final response = await http.get(Uri.parse(serverUrl));
-                if (response.statusCode == 200) {
-                  print('Response: ${response.body}');
-                  var key = await KakaoSdk.origin;
-                  print(key);
-                } else {
-                  print('Error: ${response.statusCode}');
-                  print('Message: ${jsonDecode(response.body)['message']}');
-
-                }
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: ElevatedButton(
+                onPressed: (){
+                  var data = {
+                    "username" : nameController.text,
+                    "uid" : idController.text,
+                    "password" : passwordController.text,
+                    "type" : "local"
+                  };
+                  signUp(data);
                 },
-              child: Text('get 요청'),
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.white,  // 버튼의 배경 색상
+                  onPrimary: Colors.black, // 버튼의 텍스트 색상
+                  minimumSize: Size(200, 50), // 버튼의 최소 크기
+                ),
+                child: Text(
+                'Sign Up',
+                style: TextStyle(fontSize: 20), // 텍스트의 크기 조정
+              ),
+              ),
             ),
-            SizedBox(height: 20),
-            Text('회원가입 결과: $signUpResult'),
+            Text('$signUpResult', style: TextStyle(color: Colors.red),),
           ],
         ),
       ),
     );
-    // TODO: implement build
-    throw UnimplementedError();
   }
 }

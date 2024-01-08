@@ -63,7 +63,6 @@ class MyPageStaet  extends State<MyPage>{
       ),
       body: Scaffold(
         backgroundColor: Color(0xff121212),
-
       ),
     );
   }
