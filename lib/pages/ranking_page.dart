@@ -12,7 +12,7 @@ class RankingPageStaet  extends State<RankingPage>{
   Widget build(BuildContext context
       ) {
     return Scaffold(
-      backgroundColor: Colors.cyan,
+      backgroundColor: Color(0xff121212),
     );
   }
 

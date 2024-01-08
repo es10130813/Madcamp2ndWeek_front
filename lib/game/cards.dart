@@ -80,4 +80,54 @@ class CardWidget extends StatelessWidget {
   }
 }
 
+class BuildDragTarget extends StatefulWidget {
+  final List pile;
+  List num;
+
+  BuildDragTarget({Key? key, required this.pile, required this.num}) : super(key: key);
+
+  @override
+  _BuildDragTargetState createState() => _BuildDragTargetState();
+}
+
+class _BuildDragTargetState extends State<BuildDragTarget> {
+  @override
+  Widget build(BuildContext context) {
+    return DragTarget<String>(
+      onWillAccept: (data) {
+        if (widget.num.length == 1) {
+          return (widget.pile.last[0] == data?[0] || widget.pile.last[1] == data?[1]);
+        }
+        else if (widget.num.length == 0) {
+          return widget.pile.last[0] == data?[0];
+        }
+        else {
+          return false;
+        }
+      },
+      onAccept: (data) {
+        if (data?[0]=="K") widget.num.add("turn");
+        widget.pile.add(data);
+        if (widget.num.isNotEmpty) widget.num.removeLast();
+        print(widget.pile);
+        print(widget.num);
+        print('Card $data dropped!');
+      },
+      builder: (BuildContext context, List<String?> candidateData, List<dynamic> rejectedData) {
+        return  Stack( //Pile
+          alignment: Alignment.center,
+          children: List.generate(widget.pile.length, (index) {
+            final double shift = index * 0.8;
+            return Positioned(
+                bottom: shift,
+                child: CardWidget(
+                  cardName: widget.pile.last,
+                ));
+          }),
+        );
+      },
+    );
+  }
+}
+
 
