@@ -11,7 +11,6 @@ class LogInPage extends StatefulWidget {
 }
 
 class LogInPageState  extends State<LogInPage>{
-    //final String serverUrl = 'http://143.248.196.86:3000';
     final String serverUrl = 'http://143.248.196.37:3000';
 
   String loginResult = '';
