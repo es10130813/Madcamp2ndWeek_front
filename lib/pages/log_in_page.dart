@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:madcamp_2nd_week/pages/main_page.dart';
 
 class LogInPage extends StatefulWidget {
   const LogInPage({super.key});
@@ -12,7 +13,7 @@ class LogInPage extends StatefulWidget {
 
 class LogInPageState  extends State<LogInPage>{
     //final String serverUrl = 'http://143.248.196.86:3000';
-    final String serverUrl = 'http://143.248.219.174:3000';
+    final String serverUrl = 'http://143.248.219.153:3000';
 
   String loginResult = '';
   int statusCode = 0;
@@ -32,9 +33,11 @@ class LogInPageState  extends State<LogInPage>{
       statusCode = response.statusCode;
       print(statusCode);
       if (response.statusCode == 200) {
-        setState(() {
-          loginResult = "로그인 성공";
-        });
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => MainPage()), // NewPage는 이동하려는 새 페이지
+              (Route<dynamic> route) => false, // 이 조건이 false를 반환하면 모든 페이지를 제거
+        );
       } else {
         setState(() {
           loginResult = '로그인 실패: ${response.body}';
