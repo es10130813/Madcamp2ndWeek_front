@@ -14,11 +14,11 @@ class _GamePlayState extends State<GamePlay> with SingleTickerProviderStateMixin
 
   List<String> num = ["turn"];
 
-  List<String> myHand =  ["9S", "JKR", "8D", "6H", "TC", "JS", "KS"];
+  List<String> myHand =  ["4H", "9S", "JKR", "8D", "6H", "TC", "JS", "KS", "6S"];
   List<String> firstHand = ["8H", "7S", "JD", "8C", "AD", "3D", "KD"];
   List<String> secondHand =  ["2D", "3C", "9D", "QH", "3S", "3H", "JC"];
   List<String> thirdHand =  ["2S", "5H", "5C", "KH", "5D", "9C", "TD"];
-  List<String> deck = ["4H", "2C", "8S", "5S", "6D", "QS", "TH", "6S", "6C", "9H", "KC", "7C", "7H", "JKB","JH", "4D", "QC", "TS", "4C", "AS", "2H", "QD", "AC", "AH", "7D"];
+  List<String> deck = ["2C", "8S", "5S", "6D", "QS", "TH", "6C", "9H", "KC", "7C", "7H", "JKB","JH", "4D", "QC", "TS", "4C", "AS", "2H", "QD", "AC", "AH", "7D"];
   List<String> pile = ["4S"];
 
   late OverlayEntry _overlayEntry;
@@ -418,14 +418,18 @@ class _BuildDragTargetState extends State<BuildDragTarget> {
       onWillAccept: (data) {
         if (widget.num.length == 1) {
           return (widget.pile.last[0] == data?[0] || widget.pile.last[1] == data?[1]);
-        } else {
+        }
+        else if (widget.num.length == 0) {
+          return widget.pile.last[0] == data?[0];
+        }
+        else {
           return false;
         }
       },
       onAccept: (data) {
         if (data?[0]=="K") widget.num.add("turn");
         widget.pile.add(data);
-        widget.num.removeLast();
+        if (widget.num.isNotEmpty) widget.num.removeLast();
         print(widget.pile);
         print(widget.num);
         print('Card $data dropped!');
