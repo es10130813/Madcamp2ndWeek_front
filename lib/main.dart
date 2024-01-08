@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/signup': (context) => SignUpPage(),
         '/login' : (context) => LogInPage(),
-        '/main' : (context) => MainPage(),
+        '/main' : (context) => MainPage(userId: '',),
         '/gameplay' : (context) => GamePlay(),
       },
     );

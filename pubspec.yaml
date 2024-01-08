@@ -116,12 +116,12 @@ flutter:
     - assets/images/KD.png
     - assets/images/KH.png
     - assets/images/KS.png
-    - assets/images/JKB.png
-    - assets/images/JKR.png
+    - assets/images/XB.png
+    - assets/images/XR.png
     - assets/images/card_back.png
     - assets/images/card_back_turned.png
     - assets/images/profile_pic.png
-
+    - assets/images/icon_sword.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
