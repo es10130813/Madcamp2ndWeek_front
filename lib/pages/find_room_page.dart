@@ -90,6 +90,10 @@ class _FindRoomPageState extends State<FindRoomPage> {
       });
     }
     fetchRooms();
+    socket.off('roomCreated');
+    socket.on('roomCreated', (roomCode) {
+      joinRoom(roomCode, roomData['numOfPlayer']);
+    });
   }
 
   Future<Map<String, dynamic>> _showCreateRoomDialog(BuildContext context) async {
