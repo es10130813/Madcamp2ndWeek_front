@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:madcamp_2nd_week/pages/main_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../globals.dart';
 
@@ -22,6 +23,16 @@ class LogInPageState  extends State<LogInPage>{
   var idController = TextEditingController();
   var passwordController = TextEditingController();
 
+  Future<void> saveLoginState(String userId) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('userId', userId);
+  }
+
+  Future<String?> getSavedLoginState() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('userId');
+  }
+
   bool get isButtonEnabled => idController.text.isNotEmpty && passwordController.text.isNotEmpty;
   Future<void> login(Map udata) async {
     try {
@@ -35,6 +46,7 @@ class LogInPageState  extends State<LogInPage>{
       statusCode = response.statusCode;
       print(statusCode);
       if (response.statusCode == 200) {
+        await saveLoginState(idController.text);
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => MainPage(userId: idController.text)), // NewPage는 이동하려는 새 페이지
