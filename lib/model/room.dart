@@ -17,8 +17,8 @@ class Room {
     return Room(
       roomName: json['roomName']?.toString() ?? 'Unknown',
       roomCode: json['roomCode']?.toString() ?? 'Unknown',
-      playerIDs: List<String>.from(json['players'] ?? []),
-      playerNames: List<String>.from(json['playerName'] ?? []),
+      playerIDs: List<String>.from(json['playerIDs'] ?? []),
+      playerNames: List<String>.from(json['playerNames'] ?? []),
       numOfPlayer: json['numOfPlayer'] ?? 0,
     );
   }
