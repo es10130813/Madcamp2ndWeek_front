@@ -122,6 +122,8 @@ flutter:
     - assets/images/card_back_turned.png
     - assets/images/profile_pic.png
     - assets/images/icon_sword.png
+    - assets/images/card_back_elevation.png
+    - assets/images/AS_elevation.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

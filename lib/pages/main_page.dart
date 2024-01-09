@@ -19,7 +19,6 @@ class MainPageState extends State<MainPage> {
     MyPage(userId: widget.userId), // MyPage 생성자에 userId 전달
   ];
 
-
   void onTabTapped(int index) {
     setState(() {
       _currentIndex = index;
