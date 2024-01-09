@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'find_room_page.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final String userId;
+  const HomePage({super.key, required this.userId});
 
   @override
   HomePageState createState() => HomePageState();
@@ -32,7 +33,7 @@ class HomePageState extends State<HomePage> {
                           // '방 찾기' 페이지로 이동
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => FindRoomPage()),
+                            MaterialPageRoute(builder: (context) => FindRoomPage(userId: widget.userId)),
                           );
                         } else {
                           // '방 만들기'에 대한 동작 추가

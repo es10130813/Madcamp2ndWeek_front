@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
-
 import '../globals.dart';
 
 class FindRoomPage extends StatefulWidget {
+  final String userId;
+  const FindRoomPage({super.key, required this.userId});
+
   @override
   _FindRoomPageState createState() => _FindRoomPageState();
 }
@@ -60,12 +62,47 @@ class _FindRoomPageState extends State<FindRoomPage> {
     fetchRooms();
   }
 
-  void createRoom() {
-    socket.emit('createRoom', {'hostName': 'YourUserName'});
+  void createRoom() async {
+    String roomName = await _showCreateRoomDialog(context);
+    if (roomName.isNotEmpty) {
+      socket.emit('createRoom', {'hostName': widget.userId, 'roomName': roomName});
+    }
+  }
+  Future<String> _showCreateRoomDialog(BuildContext context) async {
+    String roomName = '';
+    await showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Create a Room'),
+          content: TextField(
+            onChanged: (value) {
+              roomName = value;
+            },
+            decoration: const InputDecoration(hintText: "Enter room name"),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Create'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+    return roomName;
   }
 
   void joinRoom(String roomCode) {
-    socket.emit('joinRoom', {'roomCode': roomCode, 'userName': 'YourUserName'});
+    socket.emit('joinRoom', {'roomCode': roomCode, 'userName': widget.userId});
   }
 
   @override
@@ -89,7 +126,7 @@ class _FindRoomPageState extends State<FindRoomPage> {
         itemBuilder: (context, index) {
           final room = rooms[index];
           return ListTile(
-            title: Text('Room ${index+1} (${room.players.length}/4)'),
+            title: Text('${room.roomName} (${room.players.length}/4)'),
             onTap: (){
               joinRoom(room.roomCode);
             }, // 아무런 동작을 하지 않음
@@ -101,6 +138,7 @@ class _FindRoomPageState extends State<FindRoomPage> {
 }
 
 class Room {
+  final String roomName;
   final String roomCode;
   final String host;
   final List<String> players;
@@ -108,6 +146,7 @@ class Room {
   final int numOfPlayer;
 
   Room({
+    required this.roomName,
     required this.roomCode,
     required this.host,
     required this.players,
@@ -117,6 +156,7 @@ class Room {
 
   factory Room.fromJson(Map<String, dynamic> json) {
     return Room(
+      roomName: json['roomName']?.toString() ?? 'Unknown',
       roomCode: json['roomCode']?.toString() ?? 'Unknown',
       host: json['host'] ?? 'Unknown',
       players: List<String>.from(json['players'] ?? []),

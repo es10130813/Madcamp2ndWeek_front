@@ -15,7 +15,7 @@ class MainPageState extends State<MainPage> {
 
   List<Widget> get _navIndex => [
     RankingPage(),
-    HomePage(),
+    HomePage(userId: widget.userId),
     MyPage(userId: widget.userId), // MyPage 생성자에 userId 전달
   ];
 
