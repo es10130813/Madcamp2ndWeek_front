@@ -5,6 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:madcamp_2nd_week/pages/main_page.dart';
 
+import '../globals.dart';
+
 class LogInPage extends StatefulWidget {
   const LogInPage({super.key});
 
@@ -13,8 +15,6 @@ class LogInPage extends StatefulWidget {
 }
 
 class LogInPageState  extends State<LogInPage>{
-    //final String serverUrl = 'http://143.248.196.86:3000';
-    final String serverUrl = 'http://143.248.219.153:3000';
 
   String loginResult = '';
   int statusCode = 0;
@@ -23,9 +23,7 @@ class LogInPageState  extends State<LogInPage>{
   var passwordController = TextEditingController();
 
   bool get isButtonEnabled => idController.text.isNotEmpty && passwordController.text.isNotEmpty;
-
-
-    Future<void> login(Map udata) async {
+  Future<void> login(Map udata) async {
     try {
       print(udata);
       final response = await http.post(
@@ -124,7 +122,7 @@ class LogInPageState  extends State<LogInPage>{
               padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 25.0),
               child: TextField(
                 style: TextStyle(
-                  color: Colors.white
+                    color: Colors.white
                 ),
                 controller: passwordController,
                 obscureText: true,

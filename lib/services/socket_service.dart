@@ -12,7 +12,7 @@ class SocketService {
 
   SocketService(bool createJoin, String roomCode, String playerName, int numOfPlayer) {
 
-    socket = IO.io('https://143.248.196.37:3000',
+    socket = IO.io('http://143.248.196.37:3000',
         IO.OptionBuilder()
             .setTransports(['websocket'])
             .disableAutoConnect()

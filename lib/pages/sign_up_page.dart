@@ -13,9 +13,7 @@ class SignUpPage extends StatefulWidget {
 }
 
 class SignUpPageState extends State<SignUpPage>{
-  //final String serverUrl = 'http://143.248.196.86:3000';
-  final String serverUrl = 'http://143.248.219.153:3000';
-
+  final String serverUrl = 'http://143.248.196.86:3000';
 
   String signUpResult = '';
   int statusCode = 0;

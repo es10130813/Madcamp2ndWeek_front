@@ -121,7 +121,7 @@ class StartPage extends StatelessWidget{
                   child: InkWell(
                     borderRadius: BorderRadius.circular(15.0),
                     onTap: () {
-                      kakaotalk_login();
+                      kakaotalk_login(context);
                     },
                     child: Container(
                       width: double.infinity,

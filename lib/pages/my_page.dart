@@ -13,7 +13,7 @@ class MyPage extends StatefulWidget {
 }
 
 class MyPageStaet  extends State<MyPage>{
-  final String serverUrl = 'http://143.248.219.153:3000';
+  final String serverUrl = 'http://143.248.196.37:3000';
   int statusCode = 0;
   String username = "";
 
