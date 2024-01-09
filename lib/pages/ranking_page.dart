@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import '../globals.dart';
 import '../model/user_model.dart';
 
 class RankingPage extends StatefulWidget {
@@ -12,7 +13,6 @@ class RankingPage extends StatefulWidget {
 }
 
 class RankingPageState extends State<RankingPage> {
-  final String serverUrl = 'http://143.248.196.37:3000';
   List<Map<String, dynamic>> userDataList = [];
 
   @override

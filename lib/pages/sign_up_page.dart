@@ -1,9 +1,9 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
-import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
+
+import '../globals.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -13,8 +13,6 @@ class SignUpPage extends StatefulWidget {
 }
 
 class SignUpPageState extends State<SignUpPage>{
-  final String serverUrl = 'http://143.248.196.86:3000';
-
   String signUpResult = '';
   int statusCode = 0;
 

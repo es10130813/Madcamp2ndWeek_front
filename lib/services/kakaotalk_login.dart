@@ -1,10 +1,8 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
-import 'package:http/http.dart' as http;
-import '../globals.dart';
 import '../pages/main_page.dart';
+import 'auth_service.dart';
 
 // 사용자 정보를 서버에서 확인하고, 로그인 또는 회원가입을 진행하는 함수
 Future<void> checkAndLoginUser(BuildContext context, Map<String, dynamic> userData) async {
@@ -16,7 +14,6 @@ Future<void> checkAndLoginUser(BuildContext context, Map<String, dynamic> userDa
   // 서버에 로그인 시도
   var loginResult = await login(loginData);
   print(loginResult);
-  print(userData);
   if (loginResult == '로그인 성공') {
     // 로그인 성공: 메인 화면으로 이동
     Navigator.push(
@@ -25,7 +22,7 @@ Future<void> checkAndLoginUser(BuildContext context, Map<String, dynamic> userDa
     );
   } else {
     // 로그인 실패: 회원가입 시도
-    var signUpResult = await signUp(userData, serverUrl);
+    var signUpResult = await signUp(userData);
     if (signUpResult == '회원가입 성공') {
       // 회원가입 성공: 메인 화면으로 이동
       Navigator.push(
@@ -39,43 +36,6 @@ Future<void> checkAndLoginUser(BuildContext context, Map<String, dynamic> userDa
   }
 }
 
-// 서버에 로그인 요청을 보내는 함수
-Future<String> login(Map udata) async {
-  try {
-    final response = await http.post(
-      Uri.parse('$serverUrl/login'),
-      body: jsonEncode(udata),
-      headers: {"Content-Type": "application/json"},
-    );
-
-    if (response.statusCode == 200) {
-      return "로그인 성공";
-    } else {
-      return "바르지 않은 계정 정보입니다.";
-    }
-  } catch (e) {
-    return "Error: $e";
-  }
-}
-
-// 서버에 회원가입 요청을 보내는 함수
-Future<String> signUp(Map udata, String serverUrl) async {
-  try {
-    final response = await http.post(
-      Uri.parse('$serverUrl/register'),
-      body: jsonEncode(udata),
-      headers: {"Content-Type": "application/json"},
-    );
-
-  if (response.statusCode == 200) {
-      return "회원가입 성공";
-    } else {
-      return "중복된 id입니다.";
-    }
-  } catch (e) {
-    return 'Error: $e';
-  }
-}
 
 // 카카오톡 로그인을 처리하는 함수
 Future<void> kakaotalk_login(BuildContext context) async {
