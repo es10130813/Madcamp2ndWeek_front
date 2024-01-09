@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import '../globals.dart';
+import '../model/room.dart';
 import 'game_lobby_page.dart';
 
 typedef RoomsUpdatedCallback = void Function();
 
 class FindRoomPage extends StatefulWidget {
   final String userId;
-  const FindRoomPage({super.key, required this.userId});
+  final String userName;
+  const FindRoomPage({super.key, required this.userId, required this.userName});
 
   @override
   _FindRoomPageState createState() => _FindRoomPageState();
@@ -78,16 +80,16 @@ class _FindRoomPageState extends State<FindRoomPage> {
     fetchRooms();
   }
 
-  void createRoom() async {
-    fetchRooms();
-    var roomData = await _showCreateRoomDialog(context);
+  void createRoom() async { var roomData = await _showCreateRoomDialog(context);
     if (roomData['roomName'].isNotEmpty && roomData['numOfPlayer'] > 0) {
       socket.emit('createRoom', {
-        'hostName': widget.userId,
+        'hostID': widget.userId,
+        'hostName': widget.userName,
         'roomName': roomData['roomName'],
         'numOfPlayer': roomData['numOfPlayer']
       });
     }
+    fetchRooms();
   }
 
   Future<Map<String, dynamic>> _showCreateRoomDialog(BuildContext context) async {
@@ -150,9 +152,9 @@ class _FindRoomPageState extends State<FindRoomPage> {
     return {'roomName': roomName, 'numOfPlayer': numOfPlayer ?? 4}; // 유효하지 않은 경우 기본값으로 설정
   }
 
-  void joinRoom(String roomCode, List<String> players, int maxPlayers) {
+  void joinRoom(String roomCode, int maxPlayers) {
       // 방에 참여할 수 있는 경우의 로직
-      socket.emit('joinRoom', {'roomCode': roomCode, 'userName': widget.userId, 'players': players});
+      socket.emit('joinRoom', {'roomCode': roomCode, 'userID': widget.userId, 'userName': widget.userName});
 
       // GameRoomPage로 이동
       Room selectedRoom = rooms.firstWhere((room) => room.roomCode == roomCode, orElse: () => Room.empty());
@@ -160,8 +162,10 @@ class _FindRoomPageState extends State<FindRoomPage> {
         context,
         MaterialPageRoute(
           builder: (context) => GameRoomPage(
-            roomName: selectedRoom.roomName,
-            participants: selectedRoom.playerNames,
+            room: selectedRoom,
+            socket: socket,
+            userId: widget.userId,
+            userName: widget.userName,
           ),
         ),
       );
@@ -181,14 +185,15 @@ class _FindRoomPageState extends State<FindRoomPage> {
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
-        onPressed: createRoom,
+        onPressed:
+          createRoom,
       ),
       body: ListView.builder(
         itemCount: rooms.length,
         itemBuilder: (context, index) {
           final room = rooms[index];
           return ListTile(
-            title: Text('${room.roomName} (${room.players.length}/${room.numOfPlayer})'),
+            title: Text('${room.roomName} (${room.playerIDs.length}/${room.numOfPlayer})'),
             onTap: () {
               String currentRoomCode = room.roomCode;
               fetchRooms(onCompleted: () {
@@ -198,8 +203,8 @@ class _FindRoomPageState extends State<FindRoomPage> {
                 );
 
                 // 방이 꽉 차지 않았을 경우에만 joinRoom 호출
-                if (newRoom.players.length < newRoom.numOfPlayer) {
-                  joinRoom(newRoom.roomCode, newRoom.players, newRoom.numOfPlayer);
+                if (newRoom.playerIDs.length < newRoom.numOfPlayer) {
+                  joinRoom(newRoom.roomCode, newRoom.numOfPlayer);
                 } else {
                   // 방이 꽉 찼을 때 메시지 표시
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -217,41 +222,3 @@ class _FindRoomPageState extends State<FindRoomPage> {
   }
 }
 
-class Room {
-  final String roomName;
-  final String roomCode;
-  final String host;
-  final List<String> players;
-  final List<String> playerNames;
-  final int numOfPlayer;
-
-  Room({
-    required this.roomName,
-    required this.roomCode,
-    required this.host,
-    required this.players,
-    required this.playerNames,
-    required this.numOfPlayer,
-  });
-
-  factory Room.fromJson(Map<String, dynamic> json) {
-    return Room(
-      roomName: json['roomName']?.toString() ?? 'Unknown',
-      roomCode: json['roomCode']?.toString() ?? 'Unknown',
-      host: json['host'] ?? 'Unknown',
-      players: List<String>.from(json['players'] ?? []),
-      playerNames: List<String>.from(json['playerName'] ?? []),
-      numOfPlayer: json['numOfPlayer'] ?? 0,
-    );
-  }
-  factory Room.empty() {
-    return Room(
-      roomName: 'Unknown',
-      roomCode: 'Unknown',
-      host: 'Unknown',
-      players: [],
-      playerNames: [],
-      numOfPlayer: 0,
-    );
-  }
-}

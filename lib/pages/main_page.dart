@@ -5,7 +5,8 @@ import 'my_page.dart';
 
 class MainPage extends StatefulWidget {
   final String userId;
-  const MainPage({super.key, required this.userId});
+  final String userName;
+  const MainPage({super.key, required this.userId, required this.userName});
 
   @override
   MainPageState createState() => MainPageState();
@@ -15,7 +16,7 @@ class MainPageState extends State<MainPage> {
 
   List<Widget> get _navIndex => [
     RankingPage(),
-    HomePage(userId: widget.userId),
+    HomePage(userId: widget.userId, userName: widget.userName),
     MyPage(userId: widget.userId), // MyPage 생성자에 userId 전달
   ];
 

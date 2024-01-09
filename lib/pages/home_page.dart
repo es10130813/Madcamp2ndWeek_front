@@ -3,7 +3,8 @@ import 'find_room_page.dart';
 
 class HomePage extends StatefulWidget {
   final String userId;
-  const HomePage({super.key, required this.userId});
+  final String userName;
+  const HomePage({super.key, required this.userId, required this.userName});
 
   @override
   HomePageState createState() => HomePageState();
@@ -57,7 +58,7 @@ class HomePageState extends State<HomePage> {
                                     // '방 찾기' 페이지로 이동
                                     Navigator.push(
                                       context,
-                                    MaterialPageRoute(builder: (context) => FindRoomPage(userId: widget.userId)),
+                                    MaterialPageRoute(builder: (context) => FindRoomPage(userId: widget.userId, userName: widget.userName,)),
                                     );
                                   } else {
                                     // '방 만들기'에 대한 동작 추가

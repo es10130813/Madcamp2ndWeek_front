@@ -1,26 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
+import '../model/room.dart';
 
 class GameRoomPage extends StatelessWidget {
-  final String roomName;
-  final List<String> participants; // 참가자 목록
+  final String userId;
+  final String userName;
+  final IO.Socket socket; // 소켓 인스턴스 추가
+  final Room room;
 
-  GameRoomPage({Key? key, required this.roomName, required this.participants}) : super(key: key);
+  GameRoomPage({Key? key,  required this.userId, required this.userName, required this.socket, required this.room})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(roomName), // 방 이름 표시
+        title: Text(room.roomName),
       ),
       body: Column(
         children: [
-          // 참가자 목록 표시
+          // 참가자 목록
           Expanded(
             child: ListView.builder(
-              itemCount: participants.length,
+              itemCount: room.playerNames.length,
               itemBuilder: (context, index) {
                 return ListTile(
-                  title: Text(participants[index]),
+                  title: Text('대기방'),
                 );
               },
             ),
@@ -35,7 +40,8 @@ class GameRoomPage extends StatelessWidget {
           // 방 나가기 버튼
           ElevatedButton(
             onPressed: () {
-              // 방 나가기 로직...
+              // 방 나가기 로직
+              socket.emit('roomQuit', {'roomCode': room.roomCode, 'userId': userId}); // 소켓 인스턴스 사용
               Navigator.pop(context);
             },
             child: Text('Leave Room'),

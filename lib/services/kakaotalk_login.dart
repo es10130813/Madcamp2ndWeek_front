@@ -18,7 +18,7 @@ Future<void> checkAndLoginUser(BuildContext context, Map<String, dynamic> userDa
     // 로그인 성공: 메인 화면으로 이동
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => MainPage(userId: userData['uid'])),
+      MaterialPageRoute(builder: (context) => MainPage(userId: userData['uid'], userName: userData['username'],)),
     );
   } else {
     // 로그인 실패: 회원가입 시도
@@ -27,7 +27,7 @@ Future<void> checkAndLoginUser(BuildContext context, Map<String, dynamic> userDa
       // 회원가입 성공: 메인 화면으로 이동
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => MainPage(userId: userData['uid'])),
+        MaterialPageRoute(builder: (context) => MainPage(userId: userData['uid'], userName: userData['username'])),
       );
     } else {
       // 회원가입 실패: 오류 메시지 처리
