@@ -81,19 +81,19 @@ class _FindRoomPageState extends State<FindRoomPage> {
   }
 
   void createRoom() async { var roomData = await _showCreateRoomDialog(context);
-    if (roomData['roomName'].isNotEmpty && roomData['numOfPlayer'] > 0) {
-      socket.emit('createRoom', {
-        'hostID': widget.userId,
-        'hostName': widget.userName,
-        'roomName': roomData['roomName'],
-        'numOfPlayer': roomData['numOfPlayer']
-      });
-    }
-    fetchRooms();
-    socket.off('roomCreated');
-    socket.on('roomCreated', (roomCode) {
-      joinRoom(roomCode, roomData['numOfPlayer']);
+  if (roomData['roomName'].isNotEmpty && roomData['numOfPlayer'] > 0) {
+    socket.emit('createRoom', {
+      'hostID': widget.userId,
+      'hostName': widget.userName,
+      'roomName': roomData['roomName'],
+      'numOfPlayer': roomData['numOfPlayer']
     });
+  }
+  fetchRooms();
+  socket.off('roomCreated');
+  socket.on('roomCreated', (roomCode) {
+    joinRoom(roomCode, roomData['numOfPlayer']);
+  });
   }
 
   Future<Map<String, dynamic>> _showCreateRoomDialog(BuildContext context) async {
@@ -157,22 +157,22 @@ class _FindRoomPageState extends State<FindRoomPage> {
   }
 
   void joinRoom(String roomCode, int maxPlayers) {
-      // 방에 참여할 수 있는 경우의 로직
-      socket.emit('joinRoom', {'roomCode': roomCode, 'userID': widget.userId, 'userName': widget.userName});
+    // 방에 참여할 수 있는 경우의 로직
+    socket.emit('joinRoom', {'roomCode': roomCode, 'userID': widget.userId, 'userName': widget.userName});
 
-      // GameRoomPage로 이동
-      Room selectedRoom = rooms.firstWhere((room) => room.roomCode == roomCode, orElse: () => Room.empty());
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => GameRoomPage(
-            room: selectedRoom,
-            socket: socket,
-            userId: widget.userId,
-            userName: widget.userName,
-          ),
+    // GameRoomPage로 이동
+    Room selectedRoom = rooms.firstWhere((room) => room.roomCode == roomCode, orElse: () => Room.empty());
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => GameRoomPage(
+          room: selectedRoom,
+          socket: socket,
+          userId: widget.userId,
+          userName: widget.userName,
         ),
-      );
+      ),
+    );
   }
 
   @override
@@ -190,7 +190,7 @@ class _FindRoomPageState extends State<FindRoomPage> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed:
-          createRoom,
+        createRoom,
       ),
       body: ListView.builder(
         itemCount: rooms.length,
@@ -225,4 +225,3 @@ class _FindRoomPageState extends State<FindRoomPage> {
     );
   }
 }
-
