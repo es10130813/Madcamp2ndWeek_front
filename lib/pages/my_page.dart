@@ -1,23 +1,29 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
-import 'package:madcamp_2nd_week/pages/main_page.dart';
+import 'package:image_picker/image_picker.dart';
+import '../globals.dart';
+import 'dart:io';
 
 class MyPage extends StatefulWidget {
   final String userId;
+
   const MyPage({super.key, required this.userId});
 
   @override
   MyPageStaet createState() => MyPageStaet();
 }
 
-class MyPageStaet  extends State<MyPage>{
-  final String serverUrl = 'http://143.248.196.37:3000';
+class MyPageStaet extends State<MyPage> {
+  final ImagePicker _picker = ImagePicker();
+
+  //final String serverUrl = 'http://143.248.196.37:3000';
   int statusCode = 0;
   String username = "";
+  String? profilePictureUrl = "";
 
-  Future<void> getUsername(Map udata) async {
+  Future<void> getUserData(Map udata) async {
     try {
       print(udata);
       final response = await http.post(
@@ -30,26 +36,75 @@ class MyPageStaet  extends State<MyPage>{
       print(statusCode);
       if (response.statusCode == 200) {
         var data = json.decode(response.body);
-        username = data['message'];
+        username = data['username'];
+        profilePictureUrl = data['profilePictureUrl']; // 프로필 사진 URL 추가
         print("username: $username");
+        print("profilePictureUrl: $profilePictureUrl");
       } else {
         username = "유저정보를 가져오지 못했습니다.";
+        profilePictureUrl = null; // 오류 시 null로 설정
       }
     } catch (e) {
-
+      // 예외 처리
+      print("Error: $e");
     }
   }
+
+  Future<void> pickAndUploadImage() async {
+    try {
+      // Step 1: Picking the image
+      final XFile? pickedFile =
+          await _picker.pickImage(source: ImageSource.gallery);
+
+      if (pickedFile != null) {
+        // Step 2: Uploading the image
+        var request =
+            http.MultipartRequest('POST', Uri.parse('$serverUrl/profile'));
+
+        request.fields['uid'] = widget.userId;
+
+        request.files
+            .add(await http.MultipartFile.fromPath('image', pickedFile.path));
+
+        var response = await request.send();
+
+        if (response.statusCode == 200) {
+          // Step 3: Receiving the URL
+          var responseData = await response.stream.toBytes();
+          var responseString = String.fromCharCodes(responseData);
+          var data = json.decode(responseString);
+          var imageUrl = data['imageUrl'];
+
+          // Step 4: Updating the state
+          setState(() {
+            profilePictureUrl = imageUrl; // Update the profile picture URL
+          });
+        } else {
+          print("Failed to upload image");
+        }
+      }
+    } catch (e) {
+      print("Error picking and uploading image: $e");
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     print('UserId: ${widget.userId}');
-    var data = {"uid" : widget.userId};
-    getUsername(data);
+    var data = {"uid": widget.userId};
+
+    getUserData(data).then((_) {
+      setState(() {
+        // 여기에서 profilePictureUrl과 username 상태를 업데이트
+        profilePictureUrl; // 서버로부터 받은 URL
+        username; // 서버로부터 받은 사용자 이름
+      });
+    });
   }
 
   @override
-  Widget build(BuildContext context
-      ) {
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xff121212),
       appBar: AppBar(
@@ -61,10 +116,97 @@ class MyPageStaet  extends State<MyPage>{
           style: TextStyle(color: Colors.white, fontSize: 28),
         ),
       ),
-      body: Scaffold(
-        backgroundColor: Color(0xff121212),
+      body: Container(
+        child: Card(
+          elevation: 5.0,
+          color: Colors.white10,
+          margin: EdgeInsets.all(20.0),
+          child: Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center, // 내용을 중앙 정렬
+              children: <Widget>[
+                CircleAvatar(
+                  radius: 50, // 이미지를 원형으로 만들고 반지름을 50으로 설정
+                  backgroundImage: NetworkImage(
+                    profilePictureUrl!, // 네트워크 이미지 URL
+                  ),
+                  child: InkWell(
+                    onTap: pickAndUploadImage,
+                    child: Align(
+                      alignment: Alignment.topRight,
+                      child: Image.asset(
+                        "assets/images/icon_edit.png",
+                        width: 35,
+                        height: 35,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 8), // 이름과 UID 사이에 여백 추가
+                Text(
+                  username, // 사용자 이름을 여기에 입력
+                  style: TextStyle(
+                    fontSize: 24,
+                    color: Colors.white,
+                  ),
+                ),
+                SizedBox(height: 12), // UID 박스 위에 여백 추가
+                Row(
+                  children: [
+                    Expanded(
+                      // 가로 길이를 Expanded로 설정하여 나머지 공간을 채우도록 함
+                      child: Container(
+                        padding: EdgeInsets.only(
+                          top: 4,
+                          bottom: 4,
+                          right: 5,
+                          left: 20,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Color(0xff121212), // 회색 배경
+                          borderRadius: BorderRadius.circular(50), // 모서리 둥글게
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          // 공간 분할
+                          children: [
+                            SelectableText(
+                              "${widget.userId}", // 여기에 실제 UID 값을 넣습니다.
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white70,
+                                  fontSize: 15),
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                Icons.copy,
+                                size: 20,
+                                color: Colors.white70,
+                              ),
+                              onPressed: () {
+                                // 클립보드에 UID 복사하는 기능 구현
+                                final data =
+                                    ClipboardData(text: "${widget.userId}");
+                                Clipboard.setData(data);
+                                final snackBar = SnackBar(
+                                    content: Text('UID copied to clipboard'));
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(snackBar);
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
-
 }

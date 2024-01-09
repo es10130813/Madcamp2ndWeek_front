@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import '../globals.dart';
 import '../model/user_model.dart';
 
 class RankingPage extends StatefulWidget {
@@ -12,13 +13,13 @@ class RankingPage extends StatefulWidget {
 }
 
 class RankingPageState extends State<RankingPage> {
-  final String serverUrl = 'http://143.248.196.37:3000';
+  //final String serverUrl = 'http://143.248.196.37:3000';
   List<Map<String, dynamic>> userDataList = [];
 
   @override
   void initState() {
     super.initState();
-    fetchUserData();// 페이지가 열릴 때 데이터를 가져오기 위해 initState에서 fetchUserData 함수 호출
+    fetchUserData(); // 페이지가 열릴 때 데이터를 가져오기 위해 initState에서 fetchUserData 함수 호출
   }
 
   Future<void> fetchUserData() async {
@@ -36,9 +37,14 @@ class RankingPageState extends State<RankingPage> {
             'uid': user['uid'],
             'password': user['password'],
             'type': user['type'],
+            'profilePictureUrl': user['profilePictureUrl'],
+            'rankingScore': user['rankingScore'],
           };
           updatedUserDataList.add(userMap);
         });
+        updatedUserDataList.sort((a, b) => b['rankingScore'].compareTo(a['rankingScore']));
+
+
         setState(() {
           userDataList =
               updatedUserDataList; // userDataList를 업데이트하고 화면을 다시 그리도록 setState 호출
@@ -73,28 +79,34 @@ class RankingPageState extends State<RankingPage> {
             itemCount: userDataList.length,
             itemBuilder: (context, index) {
               return Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white10,
-                    borderRadius: BorderRadius.circular(10.0)
-                  ),
+                padding: const EdgeInsets.all(3.0),
+                child: Card(
+                  color: Colors.white10,
+                  margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 1.0),
                   child: ListTile(
-                    leading: Image.asset("assets/images/profile_pic.png"),
+                    leading: ClipOval(
+                      child: Image.network(
+                        userDataList[index]["profilePictureUrl"].toString(),
+                        width: 50,  // 원의 지름 설정
+                        height: 50, // 원의 지름 설정
+                        fit: BoxFit.cover, // 짧은 쪽에 맞추어 이미지를 조정
+                      ),
+                    ),
+
                     title: Text(
                       userDataList[index]["username"].toString(),
                       style: TextStyle(
                         color: Colors.white,
                       ),
                     ),
-                    subtitle:
-                    Text(
-                      '비번: ${userDataList[index]["password"]}',
+                    subtitle: Text(
+                      'score: ${userDataList[index]['rankingScore']}',
                       style: TextStyle(
-                      color: Colors.white60,
+                        color: Colors.white60,
+                      ),
                     ),
                   ),
-                ),),
+                ),
               );
             },
           ),

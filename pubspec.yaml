@@ -28,6 +28,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  image_picker: ^0.8.7
   http: ^1.1.2
   flutter:
     sdk: flutter
@@ -124,6 +125,7 @@ flutter:
     - assets/images/icon_sword.png
     - assets/images/card_back_elevation.png
     - assets/images/AS_elevation.png
+    - assets/images/icon_edit.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
