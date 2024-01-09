@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import '../globals.dart';
+import 'game_lobby_page.dart';
+
+typedef RoomsUpdatedCallback = void Function();
 
 class FindRoomPage extends StatefulWidget {
   final String userId;
@@ -54,8 +57,21 @@ class _FindRoomPageState extends State<FindRoomPage> {
     });
   }
 
-  void fetchRooms() {
+  void fetchRooms({RoomsUpdatedCallback? onCompleted}) {
+    socket.off('updateRooms');
     socket.emit('fetchRooms');
+    socket.on('updateRooms', (data) {
+      if (mounted) {
+        setState(() {
+          rooms = (data as List)
+              .map((roomData) => Room.fromJson(roomData as Map<String, dynamic>))
+              .toList();
+        });
+        if (onCompleted != null) {
+          onCompleted();
+        }
+      }
+    });
   }
 
   void refreshRooms() {
@@ -63,46 +79,92 @@ class _FindRoomPageState extends State<FindRoomPage> {
   }
 
   void createRoom() async {
-    String roomName = await _showCreateRoomDialog(context);
-    if (roomName.isNotEmpty) {
-      socket.emit('createRoom', {'hostName': widget.userId, 'roomName': roomName});
+    fetchRooms();
+    var roomData = await _showCreateRoomDialog(context);
+    if (roomData['roomName'].isNotEmpty && roomData['numOfPlayer'] > 0) {
+      socket.emit('createRoom', {
+        'hostName': widget.userId,
+        'roomName': roomData['roomName'],
+        'numOfPlayer': roomData['numOfPlayer']
+      });
     }
   }
-  Future<String> _showCreateRoomDialog(BuildContext context) async {
+
+  Future<Map<String, dynamic>> _showCreateRoomDialog(BuildContext context) async {
     String roomName = '';
-    await showDialog<String>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Create a Room'),
-          content: TextField(
-            onChanged: (value) {
-              roomName = value;
-            },
-            decoration: const InputDecoration(hintText: "Enter room name"),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+    int? numOfPlayer; // 초기값을 null로 설정
+    bool isValid = false; // 입력값의 유효성을 확인하기 위한 변수
+
+    while (!isValid) {
+      await showDialog<String>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Create a Room'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  onChanged: (value) {
+                    roomName = value;
+                  },
+                  decoration: const InputDecoration(hintText: "Enter room name"),
+                ),
+                TextField(
+                  onChanged: (value) {
+                    numOfPlayer = int.tryParse(value);
+                  },
+                  decoration: const InputDecoration(hintText: "Enter max players (2~4)"),
+                  keyboardType: TextInputType.number,
+                ),
+              ],
             ),
-            TextButton(
-              child: const Text('Create'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-    return roomName;
+            actions: <Widget>[
+              TextButton(
+                child: const Text('Cancel'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  isValid = true; // 취소 시에는 검증을 중단
+                },
+              ),
+              TextButton(
+                child: const Text('Create'),
+                onPressed: () {
+                  if (numOfPlayer != null && numOfPlayer! >= 2 && numOfPlayer! <= 4) {
+                    isValid = true;
+                    Navigator.of(context).pop();
+                  } else {
+                    // 사용자에게 유효하지 않은 입력임을 알림
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Please enter a number between 2 and 4'))
+                    );
+                  }
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+
+    return {'roomName': roomName, 'numOfPlayer': numOfPlayer ?? 4}; // 유효하지 않은 경우 기본값으로 설정
   }
 
-  void joinRoom(String roomCode) {
-    socket.emit('joinRoom', {'roomCode': roomCode, 'userName': widget.userId});
+  void joinRoom(String roomCode, List<String> players, int maxPlayers) {
+      // 방에 참여할 수 있는 경우의 로직
+      socket.emit('joinRoom', {'roomCode': roomCode, 'userName': widget.userId, 'players': players});
+
+      // GameRoomPage로 이동
+      Room selectedRoom = rooms.firstWhere((room) => room.roomCode == roomCode, orElse: () => Room.empty());
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => GameRoomPage(
+            roomName: selectedRoom.roomName,
+            participants: selectedRoom.playerNames,
+          ),
+        ),
+      );
   }
 
   @override
@@ -126,10 +188,28 @@ class _FindRoomPageState extends State<FindRoomPage> {
         itemBuilder: (context, index) {
           final room = rooms[index];
           return ListTile(
-            title: Text('${room.roomName} (${room.players.length}/4)'),
-            onTap: (){
-              joinRoom(room.roomCode);
-            }, // 아무런 동작을 하지 않음
+            title: Text('${room.roomName} (${room.players.length}/${room.numOfPlayer})'),
+            onTap: () {
+              String currentRoomCode = room.roomCode;
+              fetchRooms(onCompleted: () {
+                final newRoom = rooms.firstWhere(
+                      (r) => r.roomCode == currentRoomCode,
+                  orElse: () => Room.empty(),
+                );
+
+                // 방이 꽉 차지 않았을 경우에만 joinRoom 호출
+                if (newRoom.players.length < newRoom.numOfPlayer) {
+                  joinRoom(newRoom.roomCode, newRoom.players, newRoom.numOfPlayer);
+                } else {
+                  // 방이 꽉 찼을 때 메시지 표시
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('The room is full!'),
+                      duration: Duration(seconds: 1),
+                    ),
+                  );
+                }
+              });
+            },
           );
         },
       ),
@@ -162,6 +242,16 @@ class Room {
       players: List<String>.from(json['players'] ?? []),
       playerNames: List<String>.from(json['playerName'] ?? []),
       numOfPlayer: json['numOfPlayer'] ?? 0,
+    );
+  }
+  factory Room.empty() {
+    return Room(
+      roomName: 'Unknown',
+      roomCode: 'Unknown',
+      host: 'Unknown',
+      players: [],
+      playerNames: [],
+      numOfPlayer: 0,
     );
   }
 }
