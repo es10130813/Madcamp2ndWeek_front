@@ -22,7 +22,7 @@ class MyPageStaet extends State<MyPage> {
 
   int statusCode = 0;
   String username = "";
-  String? profilePictureUrl = "";
+  String? profilePictureUrl = "http://143.248.219.140:3000/images/loading.png";
 
   Future<void> getUserData(Map udata) async {
     try {
@@ -288,7 +288,12 @@ class MyPageStaet extends State<MyPage> {
             color: Colors.white10,
             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 0),
             child: InkWell(
-              onTap: showLogoutDialog,
+              onTap: () async {
+                final prefs = await SharedPreferences.getInstance();
+                final userId = prefs.getString('userId');
+                print("$userId입니다");
+                showLogoutDialog;
+              },
               child: Padding(
                 padding: EdgeInsets.all(16.0),
                 child: Column(

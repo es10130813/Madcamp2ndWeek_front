@@ -12,43 +12,22 @@ class StartPage extends StatelessWidget{
         child: Column(
             children: [
               Expanded(
-                child: Container(), // 빈 컨테이너를 추가하여 아래의 위젯들이 화면의 아래에 정렬되도록 함
-              ),
-              Container(
-                margin: EdgeInsets.only(
-                  left: 10.0, // 좌측 마진
-                  top: 4.0, // 상단 마진
-                  right: 10.0, // 우측 마진
-                  bottom: 4.0, // 하단 마진
-                ),
-                child: Material(
-                  borderRadius: BorderRadius.circular(15.0),
-                  color: Colors.white,
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(15.0),
-                    onTap: () {
-                      Navigator.pushNamed(context, '/gameplay');
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      height: 60.0,
-                      alignment: Alignment.center,
-                      child: Text(
-                        "개발자용 게임페이지 이동",
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16
-                        ),
-                      ),
+                child: Column(
+                  children: [
+                    SizedBox(height: 50,),
+                    Text("One Card", style: TextStyle(fontSize: 40, color: Colors.white),),
+                    SizedBox(height: 20,),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(width:250,height:350,child: Image.asset("assets/images/start_logo.png"),),
                     ),
-                  ),
-                ),
+                  ],
+                ), // 빈 컨테이너를 추가하여 아래의 위젯들이 화면의 아래에 정렬되도록 함
               ),
               Container(
                 margin: EdgeInsets.only(
                   left: 10.0, // 좌측 마진
-                  top: 4.0, // 상단 마진
+                  top: 0.0, // 상단 마진
                   right: 10.0, // 우측 마진
                   bottom: 4.0, // 하단 마진
                 ),
@@ -86,7 +65,7 @@ class StartPage extends StatelessWidget{
                 ),
                 child: Material(
                   borderRadius: BorderRadius.circular(15.0),
-                  color: Color(0xffF7E600),
+                  color: Colors.white,
                   child: InkWell(
                     borderRadius: BorderRadius.circular(15.0),
                     onTap: () {
@@ -96,13 +75,22 @@ class StartPage extends StatelessWidget{
                       width: double.infinity,
                       height: 60.0,
                       alignment: Alignment.center,
-                      child: Text(
-                        "Continue with Kakao",
-                        style: TextStyle(
-                            color: Color(0xff3A1D1D),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16
-                        ),
+                      child: Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(width:50, height:50,child: Image.asset("assets/images/Kakao_logo.jpg")),
+                          ),
+                          SizedBox(width: 27,),
+                          Text(
+                            "Continue with Kakao",
+                            style: TextStyle(
+                                color: Color(0xff3A1D1D),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),

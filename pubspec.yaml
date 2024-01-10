@@ -127,6 +127,8 @@ flutter:
     - assets/images/card_back_elevation.png
     - assets/images/AS_elevation.png
     - assets/images/icon_edit.png
+    - assets/images/start_logo.png
+    - assets/images/Kakao_logo.jpg
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
