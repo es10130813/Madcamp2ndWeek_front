@@ -37,6 +37,7 @@ class _GameRoomPageState extends State<GameRoomPage> {
       if (mounted && data['roomCode'] == widget.room.roomCode) {
         setState(() {
           playerNames = List<String>.from(data['playerNames']);
+          playerIDs = List<String>.from(data['playerIDs']);
         });
 
         // 사람 수가 numOfPlayer와 같아지면 5초 카운트 시작
@@ -70,7 +71,6 @@ class _GameRoomPageState extends State<GameRoomPage> {
             MaterialPageRoute(builder: (context) => GamePlay()), // _GamePlay 페이지로 이동
           );
         }
-
       }
     });
   }
