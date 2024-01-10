@@ -71,6 +71,7 @@ class _GamePlay2State extends State<GamePlay2> with SingleTickerProviderStateMix
     widget.socket.on('turnChanged', (data) {
       if(mounted)setState(() {
         currentTurnPlayerId = data['currentPlayerId'];
+        pile = List<String>.from(data['pile'].map((item) => item.toString()));
       });
     });
 
@@ -346,7 +347,6 @@ class _GamePlay2State extends State<GamePlay2> with SingleTickerProviderStateMix
                                 child: ElevatedButton(
                                   onPressed: () async {
                                   if (areListsEqual(myHand_last,myHand)) {
-                                    print('equal');
                                     int i = attacks.length + 1;
                                     while (i != 0) {
                                       String deckTop = deck.last;
@@ -360,7 +360,7 @@ class _GamePlay2State extends State<GamePlay2> with SingleTickerProviderStateMix
                                           Duration(milliseconds: 300));
                                     }
                                   }
-                                    widget.socket.emit('endTurn', {"playerId": userId});
+                                    widget.socket.emit('endTurn', {"playerId": userId, "pile": pile});
                                   },
                                   child: Text("턴 종료"),
                                 ),
