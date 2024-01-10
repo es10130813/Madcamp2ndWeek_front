@@ -75,14 +75,15 @@ class _GamePlay3State extends State<GamePlay3> with SingleTickerProviderStateMix
       print("Error: $e");
     }
   }
+
   @override
   void initState() {
     super.initState();
-
     playerNames = widget.playerNames;
     playerIDs = widget.playerIDs;
     userId = widget.userId;
     int i = playerIDs.indexOf(userId);
+
     print(playerNames);
     print(playerIDs);
     print(userId);
@@ -91,16 +92,15 @@ class _GamePlay3State extends State<GamePlay3> with SingleTickerProviderStateMix
     reorderList(playerNames, i);
     print(playerNames);
     print(playerIDs);
+
     getUserData1({"uid":playerIDs[1]}).then((_) {
       setState(() {
-        // 여기에서 profilePictureUrl과 username 상태를 업데이트
         profilePictureUrl1; // 서버로부터 받은 URL
       });
     });
 
     getUserData2({"uid":playerIDs[2]}).then((_) {
       setState(() {
-        // 여기에서 profilePictureUrl과 username 상태를 업데이트
         profilePictureUrl2; // 서버로부터 받은 URL
       });
     });

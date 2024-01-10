@@ -377,12 +377,13 @@ class _GamePlay4State extends State<GamePlay4> with SingleTickerProviderStateMix
                                 child: Container(
                                   child: Row(
                                     children: [
+                                      SizedBox(width: 20,),
                                       Container(
                                         width: 35,
                                         height: 35,
                                         child: Image.asset("assets/images/icon_sword.png"),
                                       ),
-                                      Text(attacks.length.toString()),
+                                      Text(attacks.length.toString(), style: TextStyle(color: Colors.white, fontSize: 18),),
                                     ],
                                   ),
 

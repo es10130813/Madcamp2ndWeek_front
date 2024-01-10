@@ -45,7 +45,6 @@ class MyApp extends StatelessWidget {
         '/signup': (context) => SignUpPage(),
         '/login' : (context) => LogInPage(),
         '/main' : (context) => MainPage(userId: '', userName: '',),
-        '/gameplay' : (context) => GamePlay(),
         '/start' : (context) => StartPage(),
         '/friends' : (context) => FriendsPage(),
       },

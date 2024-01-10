@@ -105,39 +105,51 @@ class _GameRoomPageState extends State<GameRoomPage> {
         return false;
       },
       child: Scaffold(
+        backgroundColor: Color(0xFF121212),
         appBar: AppBar(
-          title: Text(widget.room.roomName),
+          iconTheme: IconThemeData(color: Colors.deepPurple[300]),
+          backgroundColor: Color(0xFF121212), // AppBar 배경색도 설정
+          title: Text(widget.room.roomName, style: TextStyle(color: Colors.white)),
         ),
         body: Column(
           children: [
+            SizedBox(height: 10,),
             // 참가자 목록
             Expanded(
               child: ListView.builder(
                 itemCount: playerNames.length,
                 itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(playerNames[index]),
+                  return Padding(
+                    padding: const EdgeInsets.all(3.0),
+                    child: Card(
+                      color: Colors.white10,
+                      margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 1.0),
+                      child: ListTile(
+                        title: Text(playerNames[index], style: TextStyle(color: Colors.white),),
+                      ),
+                    ),
                   );
                 },
               ),
             ),
             // 게임 시작 버튼
-            ElevatedButton(
-              onPressed: () {
-                // 게임 시작 로직...
-              },
-              child: Text('Start Game'),
-            ),
+
             // 카운트 다운 표시
             Text(
-              'Game starts in $countdownSeconds seconds',
-              style: TextStyle(fontSize: 18),
+              'Game starts in $countdownSeconds seconds...',
+              style: TextStyle(fontSize: 22, color: Colors.white),
             ),
             // 방 나가기 버튼
+            SizedBox(height: 10,),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                primary: Colors.deepPurple[300], // 버튼 배경색 변경
+                onPrimary: Colors.black, // 버튼 텍스트 색상 변경
+              ),
               onPressed: () => leaveRoom(context),
               child: Text('Leave Room'),
             ),
+            SizedBox(height: 20,)
           ],
         ),
       ),

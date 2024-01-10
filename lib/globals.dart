@@ -1,3 +1,3 @@
 library globals;
 
-const String serverUrl = 'http://172.20.50.49:3000';
+const String serverUrl = 'http://143.248.219.140:3000';
