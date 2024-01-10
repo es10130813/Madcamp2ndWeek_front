@@ -63,8 +63,8 @@ class _GamePlay2State extends State<GamePlay2> with SingleTickerProviderStateMix
     print(playerIDs);
     print(userId);
     print(i);
-    moveToFirst(playerIDs, i);
-    moveToFirst(playerNames, i);
+    reorderList(playerIDs, i);
+    reorderList(playerNames, i);
     print(playerNames);
     print(playerIDs);
 
@@ -121,14 +121,25 @@ class _GamePlay2State extends State<GamePlay2> with SingleTickerProviderStateMix
     }
     return true;
   }
+  void reorderList<T>(List<T> list, int i) {
+    int targetIndex = i;
 
-  void moveToFirst<T>(List<T> list, int i) {
-    int index = i;
-    T element = list[i];
-    if (index != -1) {
-      list.removeAt(index);
-      list.insert(0, element);
+    T target = list[i];
+
+    if (targetIndex == -1) {
+      // target이 리스트에 없는 경우, 함수를 종료
+      return;
     }
+
+    // target 이후의 원소들을 추출하고 리스트에서 제거
+    List<T> afterTarget = list.sublist(targetIndex + 1);
+    list.removeRange(targetIndex, list.length);
+
+    // 추출한 원소들을 리스트의 시작 부분에 추가
+    list.insertAll(0, afterTarget);
+
+    // 마지막으로 target을 리스트의 시작 부분에 추가
+    list.insert(0, target);
   }
 
   void _showOverlay(BuildContext context, String deckTop) {

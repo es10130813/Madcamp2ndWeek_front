@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:madcamp_2nd_week/game/game_play_2.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import '../game/game_play.dart';
+import '../game/game_play_3.dart';
 import '../model/room.dart';
 import 'dart:async';
 
@@ -62,7 +63,13 @@ class _GameRoomPageState extends State<GameRoomPage> {
             context,
             MaterialPageRoute(builder: (context) => GamePlay2(playerNames: playerNames, playerIDs:playerIDs, userId:widget.userId, socket: widget.socket)), // _GamePlay 페이지로 이동
           );
-        }else{
+        } else if (playerNames.length==3){
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => GamePlay3(playerNames: playerNames, playerIDs:playerIDs, userId:userId)), // _GamePlay 페이지로 이동
+          );
+        }else
+        {
           Navigator.push(
             context,
           MaterialPageRoute(builder: (context) => GamePlay(playerNames: playerNames, playerIDs: playerIDs, userId: widget.userId)), // _GamePlay 페이지로 이동
