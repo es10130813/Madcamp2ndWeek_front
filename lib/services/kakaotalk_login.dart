@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../pages/main_page.dart';
 import 'auth_service.dart';
+
+Future<void> saveLoginState(String userId) async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setString('userId', userId);
+}
 
 // 사용자 정보를 서버에서 확인하고, 로그인 또는 회원가입을 진행하는 함수
 Future<void> checkAndLoginUser(BuildContext context, Map<String, dynamic> userData) async {
@@ -15,6 +21,7 @@ Future<void> checkAndLoginUser(BuildContext context, Map<String, dynamic> userDa
   var loginResult = await login(loginData);
   print(loginResult);
   if (loginResult == '로그인 성공') {
+    saveLoginState(userData['uid']);
     // 로그인 성공: 메인 화면으로 이동
     Navigator.push(
       context,

@@ -23,14 +23,10 @@ class _GameRoomPageState extends State<GameRoomPage> {
     super.initState();
     playerNames = widget.room.playerNames;
 
-    widget.socket.on('updateRooms', (data) {
-      var updatedRoom = data.firstWhere(
-              (r) => r['roomCode'] == widget.room.roomCode,
-          orElse: () => null);
-
-      if (updatedRoom != null) {
+    widget.socket.on('updateRoom', (data) {
+      if (mounted && data['roomCode'] == widget.room.roomCode) {
         setState(() {
-          playerNames = List<String>.from(updatedRoom['playerNames']);
+          playerNames = List<String>.from(data['playerNames']);
         });
       }
     });
@@ -85,8 +81,7 @@ class _GameRoomPageState extends State<GameRoomPage> {
 
   @override
   void dispose() {
-    widget.socket.off('playerJoined');
-    widget.socket.off('playerLeft');
+    widget.socket.off('updateRoom');
     super.dispose();
   }
 }

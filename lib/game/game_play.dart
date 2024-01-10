@@ -10,16 +10,18 @@ class GamePlay extends StatefulWidget {
 }
 
 class _GamePlayState extends State<GamePlay> with SingleTickerProviderStateMixin{
-  double cardLeft = 0.0;
-  int attacks = 0;
+  //double cardLeft = 7;
+  List<String> attacks = ["attack","attack","attack"];
+
+  List<String> myHand_last = ["4H", "AS", "9S", "XR","XB", "8D", "6H", "TC", "JS", "KS", "6S", "AC", "KH" ];
 
   List<String> num = ["turn"];
 
-  List<String> myHand =  ["4H", "9S", "XR", "8D", "6H", "TC", "JS", "KS", "6S"];
+  List<String> myHand =  ["4H", "AS", "9S", "XR","XB", "8D", "6H", "TC", "JS", "KS", "6S", "AC", "KH" ];
   List<String> firstHand = ["8H", "7S", "JD", "8C", "AD", "3D", "KD"];
   List<String> secondHand =  ["2D", "3C", "9D", "QH", "3S", "3H", "JC"];
-  List<String> thirdHand =  ["2S", "5H", "5C", "KH", "5D", "9C", "TD"];
-  List<String> deck = ["2C", "8S", "5S", "6D", "QS", "TH", "6C", "9H", "KC", "7C", "7H", "XB","JH", "4D", "QC", "TS", "4C", "AS", "2H", "QD", "AC", "AH", "7D"];
+  List<String> thirdHand =  ["2S", "5H", "5C", "5D", "9C", "TD"];
+  List<String> deck = ["2C", "8S", "5S", "6D", "QS", "TH", "6C", "9H", "KC", "7C", "7H", "JH", "4D", "QC", "TS", "4C", "2H", "QD", "AH", "7D"];
   List<String> pile = ["4S"];
 
   late OverlayEntry _overlayEntry;
@@ -29,12 +31,24 @@ class _GamePlayState extends State<GamePlay> with SingleTickerProviderStateMixin
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 180),
+      duration: const Duration(milliseconds: 220),
       vsync: this,
     );
   }
 
-  void _showOverlay(BuildContext context) {
+  bool areListsEqual(List list1, List list2) {
+    if (list1.length != list2.length) {
+      return false;
+    }
+    for (int i = 0; i < list1.length; i++) {
+      if (list1[i] != list2[i]) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  void _showOverlay(BuildContext context, String deckTop) {
     Size screenSize = MediaQuery.of(context).size;
 
     // 화면의 중앙을 계산
@@ -50,7 +64,7 @@ class _GamePlayState extends State<GamePlay> with SingleTickerProviderStateMixin
           builder: (context, child) {
             return Transform.translate(
               offset: Offset(0, _controller.value * 320), // 애니메이션 종료 위치 조정
-              child: CardWidget(cardName: "AS"),
+              child: CardWidget(cardName: deckTop),
             );
           },
         ),
@@ -225,7 +239,7 @@ class _GamePlayState extends State<GamePlay> with SingleTickerProviderStateMixin
                                         height: 35,
                                         child: Image.asset("assets/images/icon_sword.png"),
                                       ),
-                                      Text(attacks.toString()),
+                                      Text(attacks.length.toString()),
                                     ],
                                   ),
                                 
@@ -261,7 +275,7 @@ class _GamePlayState extends State<GamePlay> with SingleTickerProviderStateMixin
                                     color: Colors.pink[100],
                                     child: Padding(
                                       padding: EdgeInsets.symmetric(vertical: 10),
-                                      child: BuildDragTarget(pile: pile, num: num),
+                                      child: BuildDragTarget(pile: pile, num: num, attacks: attacks,),
                                     ),
                                   )),
                             ],
@@ -332,16 +346,22 @@ class _GamePlayState extends State<GamePlay> with SingleTickerProviderStateMixin
                                     visible: true,
                                     child: Padding(
                                       padding: EdgeInsets.all(10),
-                                      child: ElevatedButton(onPressed: (){
+                                      child: ElevatedButton(onPressed: () async {
                                         print(pile);
                                         print(num);
-                                        print(myHand.length+firstHand.length+secondHand.length+thirdHand.length+deck.length+pile.length);
-                                        String deckTop = deck.last;
-                                        setState(() {
-                                          deck.removeLast();
-                                        });
-                                        _showOverlay(context);
-                                        myHand.add(deckTop);
+                                        if (areListsEqual(myHand_last,myHand)){
+                                          int i = attacks.length+1;
+                                          while(i!=0){
+                                            String deckTop = deck.last;
+                                            _showOverlay(context, deckTop);
+                                            deck.removeLast();
+                                            myHand.add(deckTop);
+                                            if (i!=attacks.length+1&&attacks.length!=0) attacks.removeLast();
+                                            setState(() {});
+                                            i--;
+                                            await Future.delayed(Duration(milliseconds: 300));
+                                          }
+                                        }
                                         setState(() {});
                                       },
                                         child: Text("턴 종료"),

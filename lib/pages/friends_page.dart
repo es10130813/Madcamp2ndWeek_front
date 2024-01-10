@@ -5,57 +5,22 @@ import 'package:http/http.dart' as http;
 import '../globals.dart';
 import '../model/user_model.dart';
 
-class RankingPage extends StatefulWidget {
-  const RankingPage({super.key});
+class FriendsPage extends StatefulWidget {
+  const FriendsPage({super.key});
 
   @override
-  RankingPageState createState() => RankingPageState();
+  FriendsPageState createState() => FriendsPageState();
 }
 
-class RankingPageState extends State<RankingPage> {
+class FriendsPageState extends State<FriendsPage> {
+  //final String serverUrl = 'http://143.248.196.37:3000';
   List<Map<String, dynamic>> userDataList = [];
 
   @override
   void initState() {
     super.initState();
-    fetchUserData(); // 페이지가 열릴 때 데이터를 가져오기 위해 initState에서 fetchUserData 함수 호출
   }
 
-  Future<void> fetchUserData() async {
-    final url = Uri.parse("$serverUrl/ranking"); // API 엔드포인트 URL로 수정
-    try {
-      final response = await http.get(url);
-      if (response.statusCode == 200) {
-        final List<dynamic> userData = json.decode(response.body);
-
-        List<Map<String, dynamic>> updatedUserDataList = [];
-
-        userData.forEach((user) {
-          Map<String, dynamic> userMap = {
-            'username': user['username'],
-            'uid': user['uid'],
-            'password': user['password'],
-            'type': user['type'],
-            'profilePictureUrl': user['profilePictureUrl'],
-            'rankingScore': user['rankingScore'],
-          };
-          updatedUserDataList.add(userMap);
-        });
-        updatedUserDataList.sort((a, b) => b['rankingScore'].compareTo(a['rankingScore']));
-
-
-        setState(() {
-          userDataList =
-              updatedUserDataList; // userDataList를 업데이트하고 화면을 다시 그리도록 setState 호출
-        });
-        print(userDataList);
-      } else {
-        print('Failed to load data. Status code: ${response.statusCode}');
-      }
-    } catch (error) {
-      print('Error fetching data: $error');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +31,7 @@ class RankingPageState extends State<RankingPage> {
         automaticallyImplyLeading: false,
         backgroundColor: Color(0xff121212),
         title: Text(
-          "RANKING",
+          "FRIENDS",
           style: TextStyle(color: Colors.white, fontSize: 28),
         ),
       ),

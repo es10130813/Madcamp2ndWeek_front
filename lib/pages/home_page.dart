@@ -42,8 +42,7 @@ class HomePageState extends State<HomePage> {
                     return Container(
                       margin: EdgeInsets.symmetric(horizontal: 10.0),
                       decoration: BoxDecoration(
-                          color: index % 2 == 0 ? Colors.black : Colors.black,
-                          border: Border.all(color: Colors.white, width: 3.0),
+                          color: Colors.white10,
                           borderRadius: BorderRadius.circular(30)
                       ),
                       child: Padding(
