@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import '../game/game_play.dart';
 import '../model/room.dart';
+import 'dart:async';
 
 class GameRoomPage extends StatefulWidget {
   final String userId;
@@ -17,6 +19,8 @@ class GameRoomPage extends StatefulWidget {
 
 class _GameRoomPageState extends State<GameRoomPage> {
   List<String> playerNames = [];
+  Timer? gameStartTimer;
+  int countdownSeconds = 5;
 
   @override
   void initState() {
@@ -28,11 +32,46 @@ class _GameRoomPageState extends State<GameRoomPage> {
         setState(() {
           playerNames = List<String>.from(data['playerNames']);
         });
+
+        // 사람 수가 numOfPlayer와 같아지면 5초 카운트 시작
+        if (playerNames.length == widget.room.numOfPlayer) {
+          startGameCountdown();
+        } else {
+          // 사람 수가 변경될 때 카운트 취소
+          cancelGameCountdown();
+        }
       }
     });
   }
 
+  void startGameCountdown() {
+    gameStartTimer = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        countdownSeconds = countdownSeconds - 1;
+      });
+
+      if (countdownSeconds == 0) {
+        // 카운트 다운 종료 후 게임 시작
+        gameStartTimer?.cancel();
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => GamePlay()), // _GamePlay 페이지로 이동
+        );
+      }
+    });
+  }
+
+  void cancelGameCountdown() {
+    gameStartTimer?.cancel();
+    setState(() {
+      countdownSeconds = 5; // 카운트 초기화
+    });
+  }
+
   void leaveRoom(BuildContext context) {
+    // 카운트 다운 취소
+    cancelGameCountdown();
+
     widget.socket.emit('roomQuit', {'roomCode': widget.room.roomCode, 'userId': widget.userId});
     Navigator.pop(context);
   }
@@ -68,6 +107,11 @@ class _GameRoomPageState extends State<GameRoomPage> {
               },
               child: Text('Start Game'),
             ),
+            // 카운트 다운 표시
+            Text(
+              'Game starts in $countdownSeconds seconds',
+              style: TextStyle(fontSize: 18),
+            ),
             // 방 나가기 버튼
             ElevatedButton(
               onPressed: () => leaveRoom(context),
@@ -82,6 +126,7 @@ class _GameRoomPageState extends State<GameRoomPage> {
   @override
   void dispose() {
     widget.socket.off('updateRoom');
+    gameStartTimer?.cancel(); // 페이지가 dispose될 때 타이머도 취소
     super.dispose();
   }
 }
