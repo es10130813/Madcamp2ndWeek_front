@@ -30,7 +30,6 @@ class _GamePlay2State extends State<GamePlay2> with SingleTickerProviderStateMix
 
   Future<void> getUserData(Map udata) async {
     try {
-      print(udata);
       final response = await http.post(
         Uri.parse('$serverUrl/mypage'),
         body: jsonEncode(udata),
@@ -59,30 +58,20 @@ class _GamePlay2State extends State<GamePlay2> with SingleTickerProviderStateMix
     playerIDs = widget.playerIDs;
     userId = widget.userId;
     int i = playerIDs.indexOf(userId);
-    print(playerNames);
-    print(playerIDs);
-    print(userId);
-    print(i);
+    currentTurnPlayerId = widget.playerIDs[0];
     reorderList(playerIDs, i);
     reorderList(playerNames, i);
-    print(playerNames);
-    print(playerIDs);
 
     getUserData({"uid":playerIDs[1]}).then((_) {
-      setState(() {
+      if(mounted) setState(() {
         // 여기에서 profilePictureUrl과 username 상태를 업데이트
         profilePictureUrl; // 서버로부터 받은 URL
       });
     });
     widget.socket.on('turnChanged', (data) {
-      setState(() {
+      if(mounted)setState(() {
         currentTurnPlayerId = data['currentPlayerId'];
       });
-    });
-
-    // 턴 시작 시 자신의 턴으로 설정
-    setState(() {
-      currentTurnPlayerId = widget.userId;
     });
 
     _controller = AnimationController(
@@ -180,6 +169,7 @@ class _GamePlay2State extends State<GamePlay2> with SingleTickerProviderStateMix
 
   @override
   void dispose() {
+    widget.socket.off('turnChanged');
     _controller.dispose();
     super.dispose();
   }

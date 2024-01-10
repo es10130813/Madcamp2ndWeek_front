@@ -66,7 +66,7 @@ class _GameRoomPageState extends State<GameRoomPage> {
         } else if (playerNames.length==3){
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => GamePlay3(playerNames: playerNames, playerIDs:playerIDs, userId:userId)), // _GamePlay 페이지로 이동
+            MaterialPageRoute(builder: (context) => GamePlay3(playerNames: playerNames, playerIDs:playerIDs, userId:widget.userId)), // _GamePlay 페이지로 이동
           );
         }else
         {
