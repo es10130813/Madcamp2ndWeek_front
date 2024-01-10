@@ -36,8 +36,6 @@ class _GamePlayState extends State<GamePlay> with SingleTickerProviderStateMixin
   @override
   void initState() {
     super.initState();
-    print(widget.playerNames);
-    print(widget.playerIDs);
     _controller = AnimationController(
       duration: const Duration(milliseconds: 220),
       vsync: this,

@@ -60,7 +60,7 @@ class _GameRoomPageState extends State<GameRoomPage> {
         if (playerNames.length==2){
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => GamePlay2(playerNames: playerNames, playerIDs:playerIDs, userId:userId)), // _GamePlay 페이지로 이동
+            MaterialPageRoute(builder: (context) => GamePlay2(playerNames: playerNames, playerIDs:playerIDs, userId:widget.userId, socket: widget.socket)), // _GamePlay 페이지로 이동
           );
         }else{
           Navigator.push(

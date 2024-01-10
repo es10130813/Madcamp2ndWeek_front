@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 import '../globals.dart';
 import 'cards.dart';
 
@@ -10,8 +11,9 @@ class GamePlay2 extends StatefulWidget {
   final List<String> playerNames;
   final List<String> playerIDs;
   final String userId;
+  final IO.Socket socket;
 
-  GamePlay2({Key? key, required this.playerNames, required this.playerIDs, required this.userId})
+  GamePlay2({Key? key, required this.playerNames, required this.playerIDs, required this.userId, required this.socket})
       : super(key: key);
 
   @override
@@ -24,6 +26,7 @@ String userId = "";
 class _GamePlay2State extends State<GamePlay2> with SingleTickerProviderStateMixin{
   int statusCode = 0;
   String? profilePictureUrl = "";
+  String currentTurnPlayerId = "";
 
   Future<void> getUserData(Map udata) async {
     try {
@@ -70,6 +73,16 @@ class _GamePlay2State extends State<GamePlay2> with SingleTickerProviderStateMix
         // 여기에서 profilePictureUrl과 username 상태를 업데이트
         profilePictureUrl; // 서버로부터 받은 URL
       });
+    });
+    widget.socket.on('turnChanged', (data) {
+      setState(() {
+        currentTurnPlayerId = data['currentPlayerId'];
+      });
+    });
+
+    // 턴 시작 시 자신의 턴으로 설정
+    setState(() {
+      currentTurnPlayerId = widget.userId;
     });
 
     _controller = AnimationController(
@@ -325,36 +338,18 @@ class _GamePlay2State extends State<GamePlay2> with SingleTickerProviderStateMix
                                 flex: 3,
                                 child: Container(
                                 )),
-                            Expanded(
-                                flex: 3,
-                                child: Container(
-                                  child: Visibility(
-                                    visible: true,
-                                    child: Padding(
-                                      padding: EdgeInsets.all(10),
-                                      child: ElevatedButton(onPressed: () async {
-                                        print(pile);
-                                        print(num);
-                                        if (areListsEqual(myHand_last,myHand)){
-                                          int i = attacks.length+1;
-                                          while(i!=0){
-                                            String deckTop = deck.last;
-                                            _showOverlay(context, deckTop);
-                                            deck.removeLast();
-                                            myHand.add(deckTop);
-                                            if (i!=attacks.length+1&&attacks.length!=0) attacks.removeLast();
-                                            setState(() {});
-                                            i--;
-                                            await Future.delayed(Duration(milliseconds: 300));
-                                          }
-                                        }
-                                        setState(() {});
-                                      },
-                                        child: Text("턴 종료"),
-                                      ),
-                                    ),
-                                  ),
-                                )),
+                            Visibility(
+                              visible: userId == currentTurnPlayerId,
+                              child: Padding(
+                                padding: EdgeInsets.all(10),
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    widget.socket.emit('endTurn', {"playerId": userId});
+                                  },
+                                  child: Text("턴 종료"),
+                                ),
+                              ),
+                            ),
                           ],
                         )),
                   ],
