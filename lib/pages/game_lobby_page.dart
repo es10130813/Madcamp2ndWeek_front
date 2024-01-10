@@ -57,10 +57,17 @@ class _GameRoomPageState extends State<GameRoomPage> {
       if (countdownSeconds == 0) {
         // 카운트 다운 종료 후 게임 시작
         gameStartTimer?.cancel();
-        Navigator.push(
-          context,
+        if (playerNames.length==2){
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => GamePlay2(playerNames: playerNames, playerIDs:playerIDs, userId:userId)), // _GamePlay 페이지로 이동
+          );
+        }else{
+          Navigator.push(
+            context,
           MaterialPageRoute(builder: (context) => GamePlay(playerNames: playerNames, playerIDs: playerIDs, userId: widget.userId)), // _GamePlay 페이지로 이동
-        );
+          );
+        }
       }
     });
   }

@@ -1,86 +1,21 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import '../globals.dart';
+
 import 'cards.dart';
 
-class GamePlay2 extends StatefulWidget {
-  final List<String> playerNames;
-  final List<String> playerIDs;
-  final String userId;
+class GamePlay3 extends StatefulWidget {
 
-  GamePlay2({Key? key, required this.playerNames, required this.playerIDs, required this.userId})
+  GamePlay3({Key? key, })
       : super(key: key);
 
+
   @override
-  _GamePlay2State createState() => _GamePlay2State();
+  _GamePlay3State createState() => _GamePlay3State();
 }
-List<String> playerNames =[];
-List<String> playerIDs =[];
-String userId = "";
 
-class _GamePlay2State extends State<GamePlay2> with SingleTickerProviderStateMixin{
-  int statusCode = 0;
-  String? profilePictureUrl = "";
-
-  Future<void> getUserData(Map udata) async {
-    try {
-      print(udata);
-      final response = await http.post(
-        Uri.parse('$serverUrl/mypage'),
-        body: jsonEncode(udata),
-        headers: {"Content-Type": "application/json"},
-      );
-
-      statusCode = response.statusCode;
-      print(statusCode);
-      if (response.statusCode == 200) {
-        var data = json.decode(response.body);
-        profilePictureUrl = data['profilePictureUrl']; // 프로필 사진 URL 추가
-        print("profilePictureUrl: $profilePictureUrl");
-      } else {
-        profilePictureUrl = null; // 오류 시 null로 설정
-      }
-    } catch (e) {
-      // 예외 처리
-      print("Error: $e");
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    playerNames = widget.playerNames;
-    playerIDs = widget.playerIDs;
-    userId = widget.userId;
-    int i = playerIDs.indexOf(userId);
-    print(playerNames);
-    print(playerIDs);
-    print(userId);
-    print(i);
-    moveToFirst(playerIDs, i);
-    moveToFirst(playerNames, i);
-    print(playerNames);
-    print(playerIDs);
-
-    getUserData({"uid":playerIDs[1]}).then((_) {
-      setState(() {
-        // 여기에서 profilePictureUrl과 username 상태를 업데이트
-        profilePictureUrl; // 서버로부터 받은 URL
-      });
-    });
-
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 220),
-      vsync: this,
-    );
-  }
-
-
+class _GamePlay3State extends State<GamePlay3> with SingleTickerProviderStateMixin{
   //double cardLeft = 7;
-  List<String> attacks = [];
+  List<String> attacks = ["attack","attack","attack"];
 
   List<String> myHand_last = ["4H", "AS", "9S", "XR","XB", "8D", "6H", "TC", "JS", "KS", "6S", "AC", "KH" ];
 
@@ -96,6 +31,14 @@ class _GamePlay2State extends State<GamePlay2> with SingleTickerProviderStateMix
   late OverlayEntry _overlayEntry;
   late AnimationController _controller;
 
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 220),
+      vsync: this,
+    );
+  }
 
   bool areListsEqual(List list1, List list2) {
     if (list1.length != list2.length) {
@@ -107,15 +50,6 @@ class _GamePlay2State extends State<GamePlay2> with SingleTickerProviderStateMix
       }
     }
     return true;
-  }
-
-  void moveToFirst<T>(List<T> list, int i) {
-    int index = i;
-    T element = list[i];
-    if (index != -1) {
-      list.removeAt(index);
-      list.insert(0, element);
-    }
   }
 
   void _showOverlay(BuildContext context, String deckTop) {
@@ -159,14 +93,8 @@ class _GamePlay2State extends State<GamePlay2> with SingleTickerProviderStateMix
     _controller.dispose();
     super.dispose();
   }
-
   @override
   Widget build(BuildContext context) {
-    List<String> playerNames = widget.playerNames;
-    String userId = widget.userId;
-
-    int myTurnIndex = playerNames.indexOf(userId);
-
     return Scaffold(
       backgroundColor: Color(0xff121212),
       body: SafeArea(
@@ -174,10 +102,12 @@ class _GamePlay2State extends State<GamePlay2> with SingleTickerProviderStateMix
           children: [
             Container(
               height: 75,
+              color: Colors.deepPurple[500],
               child: Row(
                 children: [
                   Expanded(
                       child: Container(
+                        color: Colors.cyan[200],
                       )),
                   Expanded(
                     flex: 4,
@@ -194,6 +124,7 @@ class _GamePlay2State extends State<GamePlay2> with SingleTickerProviderStateMix
                           shift_num = (width - 80) / (firstHand.length - 1);
                         }
                         return Container(
+                          color: Colors.cyan[300],
                           child: Padding(
                             padding:
                             EdgeInsets.only(
@@ -220,30 +151,21 @@ class _GamePlay2State extends State<GamePlay2> with SingleTickerProviderStateMix
                   ),
                   Expanded(
                       child: Container(
+                        color: Colors.cyan[200],
                       )),
                 ],
               ),
             ),
             Container(
               height: 60,
+              color: Colors.orange[300],
               child: Column(
                 children: [
                   Container(
                     width: 800,
                     height: 40,
-                    child:  CircleAvatar(
-                      radius: 17.5, // 원의 반지름 설정
-                      child: ClipOval( // 원형 클리핑을 위한 ClipOval
-                        child: Image.network(
-                          profilePictureUrl!, // 네트워크 이미지 URL
-                          fit: BoxFit.cover, // 이미지가 영역을 채우도록 조절
-                          width: 40, // 원의 지름에 맞는 이미지 너비 설정
-                          height: 40, // 원의 지름에 맞는 이미지 높이 설정
-                        ),
-                      ),
-                    )
-                  ),
-                  Container(child: Text("${playerNames[1]}", style: TextStyle(color: Colors.white),),),
+                    child: Image.asset("assets/images/profile_pic.png"),),
+                  Container(child: Text("user1"),),
                 ],
               ),
             ),
@@ -254,27 +176,74 @@ class _GamePlay2State extends State<GamePlay2> with SingleTickerProviderStateMix
                     Expanded(
                         child : Column(
                           children: [
+                            Container(height: 10,color: Colors.teal[100],),
                             Expanded(
                               flex: 8,
-                              child: Container()
+                              child: LayoutBuilder(
+                                builder:
+                                    (BuildContext context, BoxConstraints constraints) {
+                                  double height = constraints.maxHeight;
+                                  double shift_num = 20.0;
+                                  double deck_length =
+                                      80 + shift_num * (secondHand.length - 1);
+                                  double stack_padding = (height - deck_length) / 2;
+                                  if (stack_padding < 0) {
+                                    stack_padding = 0;
+                                    shift_num = (height - 80) / (secondHand.length - 1);
+                                  }
+                                  return Container(
+                                    color: Colors.teal[300],
+                                    child: Padding(
+                                      padding:
+                                      EdgeInsets.only(
+                                        top: stack_padding,    // 위쪽 패딩 설정
+                                        bottom: stack_padding, // 아래쪽 패딩 설정
+                                        left: 0.0,    // 왼쪽 패딩 설정
+                                        right: 50.0,  // 오른쪽 패딩 설정
+                                      ),
+                                      child: Stack(
+                                        alignment: Alignment.centerRight,
+                                        children: List.generate(secondHand.length, (index) {
+                                          final double shift = index * shift_num;
+                                          return Positioned(
+                                              top: shift,
+                                              child: CardTurend(
+                                                cardName: "card_back_turned",
+                                              ));
+                                        }),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
+                            Container(height: 10,color: Colors.teal[100],),
                             Expanded(
                                 flex: 3,
                                 child: Container(
+                                  color: Colors.orange[300],
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        width: 800,
+                                        height: 40,
+                                        child: Image.asset("assets/images/profile_pic.png"),),
+                                      Container(child: Text("user2"),),
+                                    ],
+                                  ),
                                 )),
                             Expanded(
                                 flex: 3,
                                 child: Container(
+                                  color: Colors.orange[100],
                                   child: Row(
                                     children: [
-                                      SizedBox(width: 20,),
                                       Container(
                                         width: 35,
                                         height: 35,
                                         child: Image.asset("assets/images/icon_sword.png"),
                                       ),
-                                      SizedBox(width: 10,),
-                                      Text(attacks.length.toString(), style: TextStyle(color: Colors.white, fontSize: 18),),
+                                      Text(attacks.length.toString()),
                                     ],
                                   ),
 
@@ -288,6 +257,7 @@ class _GamePlay2State extends State<GamePlay2> with SingleTickerProviderStateMix
                               Expanded(
                                   flex: 2,
                                   child: Container(
+                                    color: Colors.pink[200],
                                     child: Padding(
                                       padding: EdgeInsets.symmetric(vertical: 0),
                                       child: Stack( //Deck
@@ -306,6 +276,7 @@ class _GamePlay2State extends State<GamePlay2> with SingleTickerProviderStateMix
                               Expanded(
                                   flex: 2,
                                   child: Container(
+                                    color: Colors.pink[100],
                                     child: Padding(
                                       padding: EdgeInsets.symmetric(vertical: 10),
                                       child: BuildDragTarget(pile: pile, num: num, attacks: attacks,),
@@ -317,13 +288,60 @@ class _GamePlay2State extends State<GamePlay2> with SingleTickerProviderStateMix
                     Expanded(
                         child : Column(
                           children: [
+                            Container(height: 10,color: Colors.teal[100],),
                             Expanded(
                               flex: 8,
-                              child: Container()
+                              child: LayoutBuilder(
+                                builder:
+                                    (BuildContext context, BoxConstraints constraints) {
+                                  double height = constraints.maxHeight;
+                                  double shift_num = 20.0;
+                                  double deck_length =
+                                      80 + shift_num * (thirdHand.length - 1);
+                                  double stack_padding = (height - deck_length) / 2;
+                                  if (stack_padding < 0) {
+                                    stack_padding = 0;
+                                    shift_num = (height - 80) / (thirdHand.length - 1);
+                                  }
+                                  return Container(
+                                    color: Colors.teal[300],
+                                    child: Padding(
+                                      padding:
+                                      EdgeInsets.only(
+                                        top: stack_padding,    // 위쪽 패딩 설정
+                                        bottom: stack_padding, // 아래쪽 패딩 설정
+                                        left: 50.0,    // 왼쪽 패딩 설정
+                                        right: 0.0,  // 오른쪽 패딩 설정
+                                      ),
+                                      child: Stack(
+                                        children: List.generate(thirdHand.length, (index) {
+                                          final double shift = index * shift_num;
+                                          return Positioned(
+                                              top: shift,
+                                              child: CardTurend(
+                                                cardName: "card_back_turned",
+                                              ));
+                                        }),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
+                            Container(height: 10,color: Colors.teal[100],),
                             Expanded(
                                 flex: 3,
                                 child: Container(
+                                  color: Colors.orange[300],
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        width: 800,
+                                        height: 40,
+                                        child: Image.asset("assets/images/profile_pic.png"),),
+                                      Container(child: Text("user3"),),
+                                    ],
+                                  ),
                                 )),
                             Expanded(
                                 flex: 3,
@@ -365,6 +383,7 @@ class _GamePlay2State extends State<GamePlay2> with SingleTickerProviderStateMix
                     children: [
                       Expanded(
                           child: Container(
+                            color: Colors.cyan[200],
                           )),
                       Expanded(
                         flex: 14,
@@ -381,6 +400,7 @@ class _GamePlay2State extends State<GamePlay2> with SingleTickerProviderStateMix
                               shift_num = (width - 80) / (myHand.length - 1);
                             }
                             return Container(
+                              color: Colors.cyan[300],
                               child: Padding(
                                 padding:
                                 EdgeInsets.symmetric(horizontal: stack_padding),
@@ -406,6 +426,7 @@ class _GamePlay2State extends State<GamePlay2> with SingleTickerProviderStateMix
                       ),
                       Expanded(
                           child: Container(
+                            color: Colors.cyan[200],
                           )),
                     ],
                   ),
