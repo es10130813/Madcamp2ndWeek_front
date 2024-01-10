@@ -344,7 +344,22 @@ class _GamePlay2State extends State<GamePlay2> with SingleTickerProviderStateMix
                               child: Padding(
                                 padding: EdgeInsets.all(10),
                                 child: ElevatedButton(
-                                  onPressed: () {
+                                  onPressed: () async {
+                                  if (areListsEqual(myHand_last,myHand)) {
+                                    print('equal');
+                                    int i = attacks.length + 1;
+                                    while (i != 0) {
+                                      String deckTop = deck.last;
+                                      _showOverlay(context, deckTop);
+                                      deck.removeLast();
+                                      myHand.add(deckTop);
+                                      myHand_last = List.from(myHand);
+                                      if (i != attacks.length + 1 && attacks.length != 0) attacks.removeLast();
+                                      i--;
+                                      await Future.delayed(
+                                          Duration(milliseconds: 300));
+                                    }
+                                  }
                                     widget.socket.emit('endTurn', {"playerId": userId});
                                   },
                                   child: Text("턴 종료"),
