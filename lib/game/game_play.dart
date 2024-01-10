@@ -4,6 +4,13 @@ import 'package:flutter/material.dart';
 import 'cards.dart';
 
 class GamePlay extends StatefulWidget {
+  final List<String> playerNames;
+  final List<String> playerIDs;
+  final String userId;
+  final socket;
+
+  GamePlay({Key? key, required this.userId, required this.playerNames, required this.playerIDs, required this.socket})
+      : super(key: key);
 
   @override
   _GamePlayState createState() => _GamePlayState();
@@ -30,6 +37,8 @@ class _GamePlayState extends State<GamePlay> with SingleTickerProviderStateMixin
   @override
   void initState() {
     super.initState();
+    print(widget.playerNames);
+    print(widget.playerIDs);
     _controller = AnimationController(
       duration: const Duration(milliseconds: 220),
       vsync: this,

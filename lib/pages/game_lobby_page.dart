@@ -19,6 +19,7 @@ class GameRoomPage extends StatefulWidget {
 
 class _GameRoomPageState extends State<GameRoomPage> {
   List<String> playerNames = [];
+  List<String> playerIDs = [];
   Timer? gameStartTimer;
   int countdownSeconds = 5;
 
@@ -26,11 +27,13 @@ class _GameRoomPageState extends State<GameRoomPage> {
   void initState() {
     super.initState();
     playerNames = widget.room.playerNames;
+    playerIDs = widget.room.playerIDs;
 
     widget.socket.on('updateRoom', (data) {
       if (mounted && data['roomCode'] == widget.room.roomCode) {
         setState(() {
           playerNames = List<String>.from(data['playerNames']);
+          playerIDs = List<String>.from(data['playerIDs']);
         });
 
         // 사람 수가 numOfPlayer와 같아지면 5초 카운트 시작
@@ -55,7 +58,7 @@ class _GameRoomPageState extends State<GameRoomPage> {
         gameStartTimer?.cancel();
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => GamePlay()), // _GamePlay 페이지로 이동
+          MaterialPageRoute(builder: (context) => GamePlay(playerNames: playerNames, playerIDs: playerIDs, userId: widget.userId)), // _GamePlay 페이지로 이동
         );
       }
     });
