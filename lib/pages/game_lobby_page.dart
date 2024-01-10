@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:madcamp_2nd_week/game/game_play_2.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import '../game/game_play.dart';
 import '../model/room.dart';
@@ -19,6 +20,9 @@ class GameRoomPage extends StatefulWidget {
 
 class _GameRoomPageState extends State<GameRoomPage> {
   List<String> playerNames = [];
+  List<String> playerIDs = [];
+  String userId = "";
+
   Timer? gameStartTimer;
   int countdownSeconds = 5;
 
@@ -26,6 +30,8 @@ class _GameRoomPageState extends State<GameRoomPage> {
   void initState() {
     super.initState();
     playerNames = widget.room.playerNames;
+    playerIDs = widget.room.playerIDs;
+    userId = widget.userId;
 
     widget.socket.on('updateRoom', (data) {
       if (mounted && data['roomCode'] == widget.room.roomCode) {
@@ -53,10 +59,18 @@ class _GameRoomPageState extends State<GameRoomPage> {
       if (countdownSeconds == 0) {
         // 카운트 다운 종료 후 게임 시작
         gameStartTimer?.cancel();
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => GamePlay()), // _GamePlay 페이지로 이동
-        );
+        if (playerNames.length==2){
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => GamePlay2(playerNames: playerNames, playerIDs:playerIDs, userId:userId)), // _GamePlay 페이지로 이동
+          );
+        }else{
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => GamePlay()), // _GamePlay 페이지로 이동
+          );
+        }
+
       }
     });
   }

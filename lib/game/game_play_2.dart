@@ -3,19 +3,44 @@ import 'package:flutter/material.dart';
 
 import 'cards.dart';
 
-class GamePlay extends StatefulWidget {
+class GamePlay2 extends StatefulWidget {
+  final List<String> playerNames;
+  final List<String> playerIDs;
+  final String userId;
 
-  GamePlay({Key? key, })
+  GamePlay2({Key? key, required this.playerNames, required this.playerIDs, required this.userId})
       : super(key: key);
 
+  @override
+  _GamePlay2State createState() => _GamePlay2State();
+}
+List<String> playerNames =[];
+List<String> playerIDs =[];
+String userId = "";
+
+class _GamePlay2State extends State<GamePlay2> with SingleTickerProviderStateMixin{
 
   @override
-  _GamePlayState createState() => _GamePlayState();
-}
+  void initState() {
+    super.initState();
+    playerNames = widget.playerNames;
+    playerIDs = widget.playerIDs;
+    userId = widget.userId;
+    int i = playerIDs.indexOf(userId);
+    print(playerNames);
+    print(playerIDs);
+    print(userId);
+    print(i);
+    //moveToFirst(playerIDs, i);
+    //moveToFirst(playerNames, i);
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 220),
+      vsync: this,
+    );
+  }
 
-class _GamePlayState extends State<GamePlay> with SingleTickerProviderStateMixin{
   //double cardLeft = 7;
-  List<String> attacks = ["attack","attack","attack"];
+  List<String> attacks = [];
 
   List<String> myHand_last = ["4H", "AS", "9S", "XR","XB", "8D", "6H", "TC", "JS", "KS", "6S", "AC", "KH" ];
 
@@ -31,14 +56,6 @@ class _GamePlayState extends State<GamePlay> with SingleTickerProviderStateMixin
   late OverlayEntry _overlayEntry;
   late AnimationController _controller;
 
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 220),
-      vsync: this,
-    );
-  }
 
   bool areListsEqual(List list1, List list2) {
     if (list1.length != list2.length) {
@@ -50,6 +67,15 @@ class _GamePlayState extends State<GamePlay> with SingleTickerProviderStateMixin
       }
     }
     return true;
+  }
+
+  void moveToFirst<T>(List<T> list, int i) {
+    int index = i;
+    T element = list[i];
+    if (index != -1) {
+      list.removeAt(index);
+      list.insert(0, element);
+    }
   }
 
   void _showOverlay(BuildContext context, String deckTop) {
@@ -93,8 +119,14 @@ class _GamePlayState extends State<GamePlay> with SingleTickerProviderStateMixin
     _controller.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
+    List<String> playerNames = widget.playerNames;
+    String userId = widget.userId;
+
+    int myTurnIndex = playerNames.indexOf(userId);
+
     return Scaffold(
       backgroundColor: Color(0xff121212),
       body: SafeArea(
@@ -102,12 +134,10 @@ class _GamePlayState extends State<GamePlay> with SingleTickerProviderStateMixin
           children: [
             Container(
               height: 75,
-              color: Colors.deepPurple[500],
               child: Row(
                 children: [
                   Expanded(
                       child: Container(
-                        color: Colors.cyan[200],
                       )),
                   Expanded(
                     flex: 4,
@@ -124,7 +154,6 @@ class _GamePlayState extends State<GamePlay> with SingleTickerProviderStateMixin
                           shift_num = (width - 80) / (firstHand.length - 1);
                         }
                         return Container(
-                          color: Colors.cyan[300],
                           child: Padding(
                             padding:
                             EdgeInsets.only(
@@ -140,8 +169,8 @@ class _GamePlayState extends State<GamePlay> with SingleTickerProviderStateMixin
                                 return Positioned(
                                     left: shift,
                                     child: CardWidget(
-                                        cardName: "card_back",
-                                        ));
+                                      cardName: "card_back",
+                                    ));
                               }),
                             ),
                           ),
@@ -151,21 +180,19 @@ class _GamePlayState extends State<GamePlay> with SingleTickerProviderStateMixin
                   ),
                   Expanded(
                       child: Container(
-                        color: Colors.cyan[200],
                       )),
                 ],
               ),
             ),
             Container(
               height: 60,
-              color: Colors.orange[300],
               child: Column(
                 children: [
                   Container(
                     width: 800,
                     height: 40,
                     child: Image.asset("assets/images/profile_pic.png"),),
-                  Container(child: Text("user1"),),
+                  Container(child: Text("${playerNames[1]}", style: TextStyle(color: Colors.white),),),
                 ],
               ),
             ),
@@ -176,77 +203,30 @@ class _GamePlayState extends State<GamePlay> with SingleTickerProviderStateMixin
                     Expanded(
                         child : Column(
                           children: [
-                            Container(height: 10,color: Colors.teal[100],),
                             Expanded(
                               flex: 8,
-                              child: LayoutBuilder(
-                                builder:
-                                    (BuildContext context, BoxConstraints constraints) {
-                                  double height = constraints.maxHeight;
-                                  double shift_num = 20.0;
-                                  double deck_length =
-                                      80 + shift_num * (secondHand.length - 1);
-                                  double stack_padding = (height - deck_length) / 2;
-                                  if (stack_padding < 0) {
-                                    stack_padding = 0;
-                                    shift_num = (height - 80) / (secondHand.length - 1);
-                                  }
-                                  return Container(
-                                    color: Colors.teal[300],
-                                    child: Padding(
-                                      padding:
-                                      EdgeInsets.only(
-                                        top: stack_padding,    // 위쪽 패딩 설정
-                                        bottom: stack_padding, // 아래쪽 패딩 설정
-                                        left: 0.0,    // 왼쪽 패딩 설정
-                                        right: 50.0,  // 오른쪽 패딩 설정
-                                      ),
-                                      child: Stack(
-                                        alignment: Alignment.centerRight,
-                                        children: List.generate(secondHand.length, (index) {
-                                          final double shift = index * shift_num;
-                                          return Positioned(
-                                              top: shift,
-                                              child: CardTurend(
-                                                cardName: "card_back_turned",
-                                              ));
-                                        }),
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
+                              child: Container()
                             ),
-                            Container(height: 10,color: Colors.teal[100],),
                             Expanded(
                                 flex: 3,
                                 child: Container(
-                                  color: Colors.orange[300],
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                        width: 800,
-                                        height: 40,
-                                        child: Image.asset("assets/images/profile_pic.png"),),
-                                      Container(child: Text("user2"),),
-                                    ],
-                                  ),
                                 )),
                             Expanded(
                                 flex: 3,
                                 child: Container(
-                                  color: Colors.orange[100],
                                   child: Row(
                                     children: [
+                                      SizedBox(width: 20,),
                                       Container(
                                         width: 35,
                                         height: 35,
                                         child: Image.asset("assets/images/icon_sword.png"),
                                       ),
-                                      Text(attacks.length.toString()),
+                                      SizedBox(width: 10,),
+                                      Text(attacks.length.toString(), style: TextStyle(color: Colors.white, fontSize: 18),),
                                     ],
                                   ),
-                                
+
                                 )),
                           ],
                         )),
@@ -257,7 +237,6 @@ class _GamePlayState extends State<GamePlay> with SingleTickerProviderStateMixin
                               Expanded(
                                   flex: 2,
                                   child: Container(
-                                    color: Colors.pink[200],
                                     child: Padding(
                                       padding: EdgeInsets.symmetric(vertical: 0),
                                       child: Stack( //Deck
@@ -267,8 +246,8 @@ class _GamePlayState extends State<GamePlay> with SingleTickerProviderStateMixin
                                           return Positioned(
                                               bottom: shift,
                                               child: CardWidget(
-                                                  cardName: "card_back",
-                                                  ));
+                                                cardName: "card_back",
+                                              ));
                                         }),
                                       ),
                                     ),
@@ -276,7 +255,6 @@ class _GamePlayState extends State<GamePlay> with SingleTickerProviderStateMixin
                               Expanded(
                                   flex: 2,
                                   child: Container(
-                                    color: Colors.pink[100],
                                     child: Padding(
                                       padding: EdgeInsets.symmetric(vertical: 10),
                                       child: BuildDragTarget(pile: pile, num: num, attacks: attacks,),
@@ -288,60 +266,13 @@ class _GamePlayState extends State<GamePlay> with SingleTickerProviderStateMixin
                     Expanded(
                         child : Column(
                           children: [
-                            Container(height: 10,color: Colors.teal[100],),
                             Expanded(
                               flex: 8,
-                              child: LayoutBuilder(
-                                builder:
-                                    (BuildContext context, BoxConstraints constraints) {
-                                  double height = constraints.maxHeight;
-                                  double shift_num = 20.0;
-                                  double deck_length =
-                                      80 + shift_num * (thirdHand.length - 1);
-                                  double stack_padding = (height - deck_length) / 2;
-                                  if (stack_padding < 0) {
-                                    stack_padding = 0;
-                                    shift_num = (height - 80) / (thirdHand.length - 1);
-                                  }
-                                  return Container(
-                                    color: Colors.teal[300],
-                                    child: Padding(
-                                      padding:
-                                      EdgeInsets.only(
-                                        top: stack_padding,    // 위쪽 패딩 설정
-                                        bottom: stack_padding, // 아래쪽 패딩 설정
-                                        left: 50.0,    // 왼쪽 패딩 설정
-                                        right: 0.0,  // 오른쪽 패딩 설정
-                                      ),
-                                      child: Stack(
-                                        children: List.generate(thirdHand.length, (index) {
-                                          final double shift = index * shift_num;
-                                          return Positioned(
-                                              top: shift,
-                                              child: CardTurend(
-                                                cardName: "card_back_turned",
-                                              ));
-                                        }),
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
+                              child: Container()
                             ),
-                            Container(height: 10,color: Colors.teal[100],),
                             Expanded(
                                 flex: 3,
                                 child: Container(
-                                  color: Colors.orange[300],
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                        width: 800,
-                                        height: 40,
-                                        child: Image.asset("assets/images/profile_pic.png"),),
-                                      Container(child: Text("user3"),),
-                                    ],
-                                  ),
                                 )),
                             Expanded(
                                 flex: 3,
@@ -383,7 +314,6 @@ class _GamePlayState extends State<GamePlay> with SingleTickerProviderStateMixin
                     children: [
                       Expanded(
                           child: Container(
-                            color: Colors.cyan[200],
                           )),
                       Expanded(
                         flex: 14,
@@ -400,7 +330,6 @@ class _GamePlayState extends State<GamePlay> with SingleTickerProviderStateMixin
                               shift_num = (width - 80) / (myHand.length - 1);
                             }
                             return Container(
-                              color: Colors.cyan[300],
                               child: Padding(
                                 padding:
                                 EdgeInsets.symmetric(horizontal: stack_padding),
@@ -426,7 +355,6 @@ class _GamePlayState extends State<GamePlay> with SingleTickerProviderStateMixin
                       ),
                       Expanded(
                           child: Container(
-                            color: Colors.cyan[200],
                           )),
                     ],
                   ),
